@@ -58,8 +58,8 @@ void EvioFileReader::open(const char *filename)
 
   }
   cout<<"Going to call evOpen now"<<endl;
-  evOpen(file,"ra",&evioFileHandle);
-  evIoctl(evioFileHandle, "E", (void *)&fileEventsCount);
+  evOpen(file, (char*)"ra",&evioFileHandle);
+  evIoctl(evioFileHandle, (char*)"E", (void *)&fileEventsCount);
  /* evIoctl(evioFileHandle, "V", (void *)&version);*/
 /*  evIoctl(evioFileHandle, "H", (void *)&header);*/
   numberOfEventsRead = 0;
@@ -69,9 +69,9 @@ void EvioFileReader::open(const char *filename)
   for (int ii=0;ii<8;ii++) printf("%x ",header[ii]);
   cout << endl;
 
-  uint32_t evCount, len = 0L, bufLen;
-  int i,status;
-  const uint32_t **pTable;
+//  uint32_t evCount, len = 0L, bufLen;
+//  int i,status;
+//  const uint32_t **pTable;
 
 /*
 const uint32_t *evioptr;
@@ -121,7 +121,8 @@ int   EvioFileReader::readEvent(int eventnum)
 {
   const uint32_t *evioptr;
   uint32_t        bufferlen = 0;
-  int read_status = evReadRandom(evioFileHandle,&evioptr,&bufferlen,eventnum+1);
+  //int read_status = 
+  evReadRandom(evioFileHandle,&evioptr,&bufferlen,eventnum+1);
   //cout << "\033[1;34m Read Event # " << eventnum << "  length = " << bufferlen
   //<< "  status = " << read_status
   //<<  "\033[0;0m" << endl;
@@ -129,6 +130,8 @@ int   EvioFileReader::readEvent(int eventnum)
   dataEvent.init(evioptr,bufferlen);
   
   //dataEvent.init(buffer,bufferlen);
+  
+  return 0;
 }
 /**
 * Returns Event Object 
@@ -185,5 +188,6 @@ void              EvioFileReader::getBank(EvioDataBank& bank,int tag, int num)
 
 string            EvioFileReader::getDataFormat(int tag, int num)
 {
+	return string();
 }
 

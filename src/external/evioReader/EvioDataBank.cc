@@ -71,11 +71,12 @@ EvioDataDescriptor *EvioDataBank::getDescriptor()
 }
 double   EvioDataBank::getDouble(const char *var_name, int index)
 {
-  
+	return 0; // prevent compiler warnings
 }
 
 int      EvioDataBank::getInteger(const char *var_name, int index)
 {
+	return 0; // prevent compiler warnings
 }
 
 double   EvioDataBank::getDouble(int id, int index)

@@ -7,7 +7,7 @@ using namespace std;
 #include "BDXEventProcessor.h"
 #include "string_utilities.h"
 //DAQ
-#include <DAQ/fa250Mode1Hit_factory.h>
+
 // TT
 #include <TT/TranslationTable.h>
 //#include "ctofHitR.h"

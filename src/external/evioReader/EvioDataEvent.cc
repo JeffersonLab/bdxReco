@@ -112,7 +112,7 @@ void            EvioDataEvent::runIndexing(){
 
 float          *EvioDataEvent::getf   ( int tag, int num , int *len)
 {
-  
+ 	return 0; // placeholder to prevent compiler warnings 
 }
 
 double         *EvioDataEvent::getd   ( int tag, int num , int *len)
@@ -416,7 +416,8 @@ void EvioDataEvent::decodeCompositeData(char *data, int size){
   offset = offset + 1 + 4 + 8 + 4;
   int nchannels = 0;
   while(offset<size){
-    uint8_t  chan    = getInt8(data,offset);
+//    uint8_t  chan    = 
+	getInt8(data,offset);
     uint32_t samples = getInt32(data,offset+1);
     offset = offset + 1 + 4;
     //cout << " CHANNEL = " << (unsigned int) chan << "  SAMPLES = " << (unsigned int) samples << "  " << 

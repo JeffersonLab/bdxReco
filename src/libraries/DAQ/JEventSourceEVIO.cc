@@ -26,7 +26,7 @@ using namespace std;
 // Constructor
 JEventSourceEvio::JEventSourceEvio(const char* source_name, goptions Opt):JEventSource(source_name),
 		chan(0),EDT(0),vme_mother_tag(0),child_mode1_tag(0),child_mode7_tag(0),eventHeader_tag(0),
-		curEventNumber(0),curRunNumber(0)
+		curRunNumber(0),curEventNumber(0)
 {
 	bdxOpt = Opt;
 
@@ -122,20 +122,20 @@ jerror_t JEventSourceEvio::GetEvent(JEvent &event)
 		for(iter=fullList->begin(); iter!=fullList->end(); iter++) {
 			if(((*iter)->tag==prestart_tag)&&(overwriteRunNumber==-1)){
 				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
-				int leafSize = leaf->getSize();
+//				int leafSize = leaf->getSize();
 				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 				curRunNumber=pData->at(1);
 				jout<<"New run number: "<<curRunNumber<<endl;
 			}
 			if((*iter)->tag==eventHeader_CODA_tag){ /*To be compatible also with data taken without header*/
 				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
-				int leafSize = leaf->getSize();
+//				int leafSize = leaf->getSize();
 				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 				event.SetEventNumber(pData->at(0));
 			}
 			if((*iter)->tag==eventHeader_tag){
 				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
-				int leafSize = leaf->getSize();
+//				int leafSize = leaf->getSize();
 				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 				event.SetEventNumber(pData->at(2));
 				curRunNumber=pData->at(1);

@@ -49,7 +49,7 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
 	TranslationTable::ChannelInfo m_channel;
-	TranslationTable::csc_t		  m_csc;
+//	TranslationTable::csc_t		  m_csc;
 	IntVetoDigiHit *m_IntVetoDigiHit=0;
 
 	//1: Here, we get from the framework the objects we need to process
@@ -62,7 +62,7 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	jout<<"GOT: "<<m_IntVetoSiPMHit.size()<<endl;
 
 	/*Do the matching
-	/*Proceed in this way:
+	 *Proceed in this way:
 	 * loop over the hits
 	 * get the hit index, but put the readout to 0 (active detector element!)
 	 * check if, in the map, a key with this detector index already exists.

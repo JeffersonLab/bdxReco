@@ -12,7 +12,7 @@ using namespace std;
 #include "JEventProcessor_test.h"
 #include "system/BDXEventProcessor.h"
 
-#include <DAQ/fa250Mode1Hit.h>
+#include <DAQ/fa250Mode1CalibHit.h>
 
 #include <TT/TranslationTable.h>
 
@@ -156,7 +156,7 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 	//
 	vector<const IntVetoSiPMHit*> data;
 	vector<const IntVetoSiPMHit*>::const_iterator data_it;
-	const fa250Mode1Hit *fa;
+	const fa250Mode1CalibHit *fa;
 	loop->Get(data);
 
 	const triggerData* tData;
@@ -179,18 +179,26 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
 	for (data_it=data.begin();data_it<data.end();data_it++){
+	
+		const IntVetoSiPMHit *ivhit = *data_it;
 
-		if (((*data_it)->m_channel.int_veto.component==0)&&(((*data_it)->m_channel.int_veto.readout==1))){
-			jout<<eventnumber<<" "<<((*data_it)->fa250Hit_id)<<endl;
-			fa=loop->FindByID<fa250Mode1Hit>((*data_it)->fa250Hit_id);
+		if ((ivhit->m_channel.int_veto.component==4)&&((ivhit->m_channel.int_veto.readout==1))){
+			jout<<eventnumber<<" "<<(ivhit->fa250Hit_id)<<endl;
+
+			// Get associated fa250Mode1CalibHit object
+			fa = NULL;
+			ivhit->GetSingle(fa);
+			if(!fa) continue; // need fa250Mode1CalibHit to continue
+
 			h->Reset();
-			h->SetName(Form("h%i",eventnumber));
+			h->SetName(Form("h%lld",eventnumber));
 			for (int ii=0;ii<fa->samples.size();ii++){
-				h->Fill(ii,fa->samples.at(ii)*fa250Mode1Hit::LSB);
+				h->Fill(ii,fa->samples.at(ii));
 			}
+
 			h->Write();
 			eventN=eventnumber;
-			component=(*data_it)->m_channel.int_veto.readout;
+			component=ivhit->m_channel.int_veto.readout;
 			Q=(*data_it)->Q;
 			t->Fill();
 		}

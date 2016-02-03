@@ -1,21 +1,22 @@
 // $Id$
 //
-//    File: fa250Mode1Hit_factory.h
-// Created: Mon Dec 28 11:04:04 CET 2015
-// Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
+//    File: fa250Mode1CalibHit_factory.h
+// Created: Wed Feb  3 07:38:15 EST 2016
+// Creator: davidl (on Darwin harriet.jlab.org 13.4.0 i386)
 //
 
-#ifndef _fa250Mode1Hit_factory_
-#define _fa250Mode1Hit_factory_
+#ifndef _fa250Mode1CalibHit_factory_
+#define _fa250Mode1CalibHit_factory_
 
 #include <JANA/JFactory.h>
-#include "fa250Mode1Hit.h"
+#include "fa250Mode1CalibHit.h"
 
-class fa250Mode1Hit_factory:public jana::JFactory<fa250Mode1Hit>{
+class fa250Mode1CalibHit_factory:public jana::JFactory<fa250Mode1CalibHit>{
 	public:
-		fa250Mode1Hit_factory(){};
-		~fa250Mode1Hit_factory(){};
+		fa250Mode1CalibHit_factory():LSB(0){};
+		~fa250Mode1CalibHit_factory(){};
 
+		double LSB;
 
 	private:
 		jerror_t init(void);						///< Called once at program start.
@@ -25,5 +26,5 @@ class fa250Mode1Hit_factory:public jana::JFactory<fa250Mode1Hit>{
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 };
 
-#endif // _fa250Mode1Hit_factory_
+#endif // _fa250Mode1CalibHit_factory_
 

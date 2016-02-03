@@ -21,7 +21,18 @@ class fa250Mode1Hit:public fa250Hit{
 		// Add data members here. For example:
 		// int id;
 		// double E;
-		static const double LSB = 0.4884;
+		
+		// This should probably not belong here. First, the compiler
+		// complains that static const member intitialization within 
+		// the class definition is a GNU extension and not generic C++.
+		// Second, the purpose of this seems to be to convert the 
+		// values in "samples" to different units. The preferred way
+		// would be to create another hit class with its own factory
+		// that reads fa250Mode1Hit objects and creates ones of the
+		// new class from those, applying the LSB calibration constant.
+		// That would allow the calibration constant to be read from
+		// the CCDB during brun.
+//		static const double LSB = 0.4884;
 
 		vector <short> samples;
 

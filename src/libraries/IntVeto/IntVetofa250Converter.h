@@ -15,7 +15,7 @@
 #include <DAQ/fa250Converter.h>
 #include <TT/TranslationTable.h>
 
-class fa250Mode1Hit;
+class fa250Mode1CalibHit;
 class fa250Mode7Hit;
 
 
@@ -24,7 +24,7 @@ class IntVetofa250Converter:public fa250Converter<IntVetoSiPMHit>{
 		JOBJECT_PUBLIC(IntVetofa250Converter);// Add data members here. For example:
 
 		virtual IntVetoSiPMHit* convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel) const;
-		jerror_t convertMode1Hit(IntVetoSiPMHit* output,const fa250Mode1Hit *input) const;
+		jerror_t convertMode1Hit(IntVetoSiPMHit* output,const fa250Mode1CalibHit *input) const;
 		jerror_t convertMode7Hit(IntVetoSiPMHit* output,const fa250Mode7Hit *input) const;
 };
 

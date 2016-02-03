@@ -46,10 +46,11 @@ int JROOTOutput::SaveAll(){
 	}
 	m_file->cd();
 	//Loop over the TList via a TIter
-	while (m_cur_obj = m_iter->Next()){
+	while ( (m_cur_obj = m_iter->Next()) ){
 		jout<<"JROOTOutput::saving object "<<m_cur_obj->GetName()<<endl;
 		m_cur_obj->Write();
 	}
+	return 0; // prevent compiler warnings
 }
 
 
@@ -59,4 +60,6 @@ int JROOTOutput::AddObject(TObject *obj){
 			return -1;
 	}
 	m_objects->Add(obj);
+	
+	return 0; // prevent compiler warnings
 }

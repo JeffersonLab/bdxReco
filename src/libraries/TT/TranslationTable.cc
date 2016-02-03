@@ -281,13 +281,13 @@ void StartElement(void *userData, const char *xmlname, const char **atts)
 	static int crate=0, slot=0;
 
 	static string type,Type;
-	int mc2codaType= 0;
+//	int mc2codaType= 0;
 	int channel = 0;
 	string Detector, locSystem;
-	int end=0;
+//	int end=0;
 	int row=0,column=0,module=0,sector=0,layer=0,component=0,readout=0;
 	int id=0;
-	int side=0;
+//	int side=0;
 
 	// This complicated line just recasts the userData pointer into
 	// a reference to the "TT" member of the TranslationTable object

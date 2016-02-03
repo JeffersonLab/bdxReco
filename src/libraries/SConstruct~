@@ -1,8 +1,0 @@
-Import('env')
-
-# Loop over libraries, building each
-libs=['DAQ', 'system','ctof']
-
-for lib in libs:
-    src =Glob(lib+'/*.cc')
-    env.SharedLibrary(source=src,target='#/lib/'+lib)
