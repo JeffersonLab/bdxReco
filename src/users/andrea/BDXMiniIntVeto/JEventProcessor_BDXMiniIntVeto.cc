@@ -66,10 +66,10 @@ jerror_t JEventProcessor_BDXMiniIntVeto::init(void) {
 	japp->RootWriteLock();
 	t = new TTree("BDXMiniIntVeto", "BDXMiniIntVeto");
 	t->Branch("eventN", &eventNumber);
-	t->Branch("QL0", QL0, "QL0[8]/D");
-	t->Branch("QL1", QL1, "QL1[8]/D");
-	t->Branch("AL0", AL0, "AL0[8]/D");
-	t->Branch("AL1", AL1, "AL1[8]/D");
+	t->Branch("QL0", QL0, "QL0[10]/D");
+	t->Branch("QL1", QL1, "QL1[10]/D");
+	t->Branch("AL0", AL0, "AL0[10]/D");
+	t->Branch("AL1", AL1, "AL1[10]/D");
 	t->Branch("maxL0", &maxL0);
 	t->Branch("maxL1", &maxL1);
 	t->Branch("crsTOPl", crsTOPl, "crsTOPl[22]/O");
@@ -241,10 +241,25 @@ jerror_t JEventProcessor_BDXMiniIntVeto::evnt(JEventLoop *loop, uint64_t eventnu
 		if (digi_hit->m_channel.component == 10) { //TOP
 			if (digi_hit->Qphe > m_thrIntVetoCaps) {
 				nTopCaps++;
+				if (digi_hit->m_channel.layer == 0) {
+					QL0[digi_hit->m_channel.component - 1] = digi_hit->Qphe;
+					AL0[digi_hit->m_channel.component - 1] = digi_hit->Aphe;
+				} else {
+					QL1[digi_hit->m_channel.component - 1] = digi_hit->Qphe;
+					AL1[digi_hit->m_channel.component - 1] = digi_hit->Aphe;
+				}
+
 			}
 		} else if (digi_hit->m_channel.component == 9) { //BOTTOM
 			if (digi_hit->Qphe > m_thrIntVetoCaps) {
 				nBottomCaps++;
+				if (digi_hit->m_channel.layer == 0) {
+					QL0[digi_hit->m_channel.component - 1] = digi_hit->Qphe;
+					AL0[digi_hit->m_channel.component - 1] = digi_hit->Aphe;
+				} else {
+					QL1[digi_hit->m_channel.component - 1] = digi_hit->Qphe;
+					AL1[digi_hit->m_channel.component - 1] = digi_hit->Aphe;
+				}
 			}
 		} else if (digi_hit->m_channel.component <= 8) {
 			if (digi_hit->m_channel.layer == 0) {
