@@ -34,8 +34,8 @@ class JEventProcessor_BDXMiniIntVeto:public jana::JEventProcessor{
 		int eventNumber;
 		int m_isFirstCallToBrun;
 		int m_isMC;
-		double QL0[8],QL1[8];
-		double AL0[8],AL1[8];
+		double QL0[10],QL1[10];
+		double AL0[10],AL1[10];
 		int maxL0,maxL1;
 		int topbottom;
 		bool crsTOPl[22],crsTOPh[22];

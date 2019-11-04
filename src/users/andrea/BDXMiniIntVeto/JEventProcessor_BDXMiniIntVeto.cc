@@ -230,6 +230,12 @@ jerror_t JEventProcessor_BDXMiniIntVeto::evnt(JEventLoop *loop, uint64_t eventnu
 			}
 		}
 	}
+	for (int ii=0;ii<10;ii++){
+		QL0[ii]=-1.;
+		QL1[ii]=-1.;
+		AL0[ii]=-1.;
+		AL1[ii]=-1.;
+	}
 
 	/*Here goes the code to create the objects*/
 	for (digi_hits_it = digi_hits.begin(); digi_hits_it != digi_hits.end(); digi_hits_it++) {
