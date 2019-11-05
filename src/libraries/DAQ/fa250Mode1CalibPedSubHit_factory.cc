@@ -77,7 +77,12 @@ jerror_t fa250Mode1CalibPedSubHit_factory::evnt(JEventLoop *loop, uint64_t event
 
 		PARMSdata = m_parms->getCalib(hit->m_channel);
 		LSB = PARMSdata[0];
-		dT = PARMSdata[1];
+		dT=0;
+		if (PARMSdata.size()>=2){
+			dT = PARMSdata[1];
+		}
+
+		if (dT==0) dT=4; //retro-compatibility
 
 		for (uint32_t j = 0; j < hit->samples.size(); j++) {  //j=0
 			sample = (double) hit->samples[j]; //get the sample

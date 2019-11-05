@@ -14,6 +14,7 @@ TCanvas* IntVetoDigiHit::Draw(int id) const {
 		jout<<"IntVetoDigiHit::Draw no wave associated to this "<<endl;
 		wave=0;
 		Nsamples = 1;
+		return 0;
 	}
 	else{
 		wave=waves[0];

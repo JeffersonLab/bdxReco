@@ -148,7 +148,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 	output->nSingles = m_singleCrossingIndexes.size();
 	if ((output->nSingles) == 0) {
 		output->m_type = IntVetoSiPMHit::noise;
-		output->Qraw = this->sumSamples(m_NSAs + m_NSBs, &(m_waveform.at(0)));  //for compatibility with case 1
+		output->Qraw = this->sumSamples((m_NSAs + m_NSBs > m_waveform.size()) ? m_waveform.size() : m_NSAs+m_NSBs, &(m_waveform[0]));  //for compatibility with case 1
 		output->Araw = this->getMaximum(m_waveform.size(), &(m_waveform[0]), output->T);
 		output->T = -1;
 		return NOERROR;
