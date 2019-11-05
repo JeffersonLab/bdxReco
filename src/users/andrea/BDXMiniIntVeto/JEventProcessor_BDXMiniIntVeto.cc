@@ -180,6 +180,7 @@ jerror_t JEventProcessor_BDXMiniIntVeto::evnt(JEventLoop *loop, uint64_t eventnu
 			return OBJECT_NOT_AVAILABLE;
 		}
 	}
+
 	int nTopCaps = 0;
 	int nBottomCaps = 0;
 
@@ -191,22 +192,28 @@ jerror_t JEventProcessor_BDXMiniIntVeto::evnt(JEventLoop *loop, uint64_t eventnu
 
 	int X, Y, id;
 
+	//Create temporary arrays that will exist only within this method
+	double tmpQL0[10],tmpQL1[10];
+	double tmpAL0[10],tmpAL1[10];
+	bool tmpcrsTOPl[22],tmpcrsTOPh[22];
+	bool tmpcrsBOTl[22],tmpcrsBOTh[22];
+
 	/*Get objects from JANA factories*/
 	if (m_isMC) {
 		loop->Get(digi_hits, "MC");
 	} else {
 		loop->Get(digi_hits);
 	}
+	loop->Get(calo_hits);
 
 	for (int ii = 0; ii < 22; ii++) {
-		crsBOTl[ii] = false;
-		crsTOPl[ii] = false;
-		crsBOTh[ii] = false;
-		crsTOPh[ii] = false;
+		tmpcrsBOTl[ii] = false;
+		tmpcrsTOPl[ii] = false;
+		tmpcrsBOTh[ii] = false;
+		tmpcrsTOPh[ii] = false;
 	}
 
 	/*Crystals thresholds*/
-	loop->Get(calo_hits);
 	for (calo_hits_it = calo_hits.begin(); calo_hits_it != calo_hits.end(); calo_hits_it++) {
 		m_CaloHit = *calo_hits_it;
 		X = m_CaloHit->m_channel.x;
@@ -216,25 +223,25 @@ jerror_t JEventProcessor_BDXMiniIntVeto::evnt(JEventLoop *loop, uint64_t eventnu
 
 		if (m_CaloHit->E > m_thrCrystalsH) {
 			if (m_CaloHit->m_channel.sector == 0) {
-				crsTOPh[id] = true;
+				tmpcrsTOPh[id] = true;
 			} else {
-				crsBOTh[id] = true;
+				tmpcrsBOTh[id] = true;
 			}
 		}
 
 		if (m_CaloHit->E > m_thrCrystalsL) {
 			if (m_CaloHit->m_channel.sector == 0) {
-				crsTOPl[id] = true;
+				tmpcrsTOPl[id] = true;
 			} else {
-				crsBOTl[id] = true;
+				tmpcrsBOTl[id] = true;
 			}
 		}
 	}
-	for (int ii=0;ii<10;ii++){
-		QL0[ii]=-1.;
-		QL1[ii]=-1.;
-		AL0[ii]=-1.;
-		AL1[ii]=-1.;
+	for (int ii = 0; ii < 10; ii++) {
+		tmpQL0[ii] = -1.;
+		tmpQL1[ii] = -1.;
+		tmpAL0[ii] = -1.;
+		tmpAL1[ii] = -1.;
 	}
 
 	/*Here goes the code to create the objects*/
@@ -248,11 +255,11 @@ jerror_t JEventProcessor_BDXMiniIntVeto::evnt(JEventLoop *loop, uint64_t eventnu
 			if (digi_hit->Qphe > m_thrIntVetoCaps) {
 				nTopCaps++;
 				if (digi_hit->m_channel.layer == 0) {
-					QL0[digi_hit->m_channel.component - 1] = digi_hit->Qphe;
-					AL0[digi_hit->m_channel.component - 1] = digi_hit->Aphe;
+					tmpQL0[digi_hit->m_channel.component - 1] = digi_hit->Qphe;
+					tmpAL0[digi_hit->m_channel.component - 1] = digi_hit->Aphe;
 				} else {
-					QL1[digi_hit->m_channel.component - 1] = digi_hit->Qphe;
-					AL1[digi_hit->m_channel.component - 1] = digi_hit->Aphe;
+					tmpQL1[digi_hit->m_channel.component - 1] = digi_hit->Qphe;
+					tmpAL1[digi_hit->m_channel.component - 1] = digi_hit->Aphe;
 				}
 
 			}
@@ -260,24 +267,24 @@ jerror_t JEventProcessor_BDXMiniIntVeto::evnt(JEventLoop *loop, uint64_t eventnu
 			if (digi_hit->Qphe > m_thrIntVetoCaps) {
 				nBottomCaps++;
 				if (digi_hit->m_channel.layer == 0) {
-					QL0[digi_hit->m_channel.component - 1] = digi_hit->Qphe;
-					AL0[digi_hit->m_channel.component - 1] = digi_hit->Aphe;
+					tmpQL0[digi_hit->m_channel.component - 1] = digi_hit->Qphe;
+					tmpAL0[digi_hit->m_channel.component - 1] = digi_hit->Aphe;
 				} else {
-					QL1[digi_hit->m_channel.component - 1] = digi_hit->Qphe;
-					AL1[digi_hit->m_channel.component - 1] = digi_hit->Aphe;
+					tmpQL1[digi_hit->m_channel.component - 1] = digi_hit->Qphe;
+					tmpAL1[digi_hit->m_channel.component - 1] = digi_hit->Aphe;
 				}
 			}
 		} else if (digi_hit->m_channel.component <= 8) {
 			if (digi_hit->m_channel.layer == 0) {
-				QL0[digi_hit->m_channel.component - 1] = digi_hit->Qphe;
-				AL0[digi_hit->m_channel.component - 1] = digi_hit->Aphe;
+				tmpQL0[digi_hit->m_channel.component - 1] = digi_hit->Qphe;
+				tmpAL0[digi_hit->m_channel.component - 1] = digi_hit->Aphe;
 				if (digi_hit->Aphe > maxComponentQ0L) {
 					maxComponent0L = digi_hit->m_channel.component;
 					maxComponentQ0L = digi_hit->Aphe;
 				}
 			} else if (digi_hit->m_channel.layer == 1) {
-				QL1[digi_hit->m_channel.component - 1] = digi_hit->Qphe;
-				AL1[digi_hit->m_channel.component - 1] = digi_hit->Aphe;
+				tmpQL1[digi_hit->m_channel.component - 1] = digi_hit->Qphe;
+				tmpAL1[digi_hit->m_channel.component - 1] = digi_hit->Aphe;
 				if ((digi_hit->Aphe > maxComponentQ1L)) {
 					maxComponent1L = digi_hit->m_channel.component;
 					maxComponentQ1L = digi_hit->Aphe;
@@ -285,16 +292,38 @@ jerror_t JEventProcessor_BDXMiniIntVeto::evnt(JEventLoop *loop, uint64_t eventnu
 			}
 		}
 	}
-	maxL0 = maxComponent0L;
-	maxL1 = maxComponent1L;
 
 	if ((nTopCaps == 2) || (nBottomCaps == 2)) {
-		if ((nTopCaps == 2) && (nBottomCaps == 0)) topbottom = 0;
-		else if ((nTopCaps == 0) && (nBottomCaps == 2)) topbottom = 1;
-		else
-			topbottom = 2;
-
+		//Copy to data going to the ttree
 		japp->RootWriteLock();
+		if ((nTopCaps == 2) && (nBottomCaps == 2)) topbottom = 2;
+		else if (nTopCaps == 2) topbottom = 0;
+		else if (nBottomCaps == 2) topbottom = 1;
+		else
+			topbottom = -1;
+
+
+
+		eventNumber = tData->eventN;
+		maxL0 = maxComponent0L;
+		maxL1 = maxComponent1L;
+
+		//Charge copy
+		std::copy(tmpQL0,tmpQL0+10,QL0);
+		std::copy(tmpQL1,tmpQL1+10,QL1);
+
+		//Amplitude copy
+		std::copy(tmpAL0,tmpAL0+10,AL0);
+		std::copy(tmpAL1,tmpAL1+10,AL1);
+
+		//crs bool
+		std::copy(tmpcrsTOPl,tmpcrsTOPl+22,crsTOPl);
+		std::copy(tmpcrsTOPh,tmpcrsTOPh+22,crsTOPh);
+		std::copy(tmpcrsBOTl,tmpcrsBOTl+22,crsBOTl);
+		std::copy(tmpcrsBOTh,tmpcrsBOTh+22,crsBOTh);
+
+
+
 		t->Fill();
 		japp->RootUnLock();
 	}
