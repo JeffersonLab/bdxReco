@@ -193,10 +193,14 @@ jerror_t JEventProcessor_BDXMiniIntVeto::evnt(JEventLoop *loop, uint64_t eventnu
 	int X, Y, id;
 
 	//Create temporary arrays that will exist only within this method
-	double tmpQL0[10],tmpQL1[10];
-	double tmpAL0[10],tmpAL1[10];
-	bool tmpcrsTOPl[22],tmpcrsTOPh[22];
-	bool tmpcrsBOTl[22],tmpcrsBOTh[22];
+	double tmpQL0[10];
+	double tmpQL1[10];
+	double tmpAL0[10];
+	double tmpAL1[10];
+	bool tmpcrsTOPl[22];
+	bool tmpcrsTOPh[22];
+	bool tmpcrsBOTl[22];
+	bool tmpcrsBOTh[22];
 
 	/*Get objects from JANA factories*/
 	if (m_isMC) {
@@ -302,29 +306,30 @@ jerror_t JEventProcessor_BDXMiniIntVeto::evnt(JEventLoop *loop, uint64_t eventnu
 		else
 			topbottom = -1;
 
-
-
-		eventNumber = tData->eventN;
+		eventNumber = 0;
+		if (!m_isMC) {
+			eventNumber = tData->eventN;
+		}
 		maxL0 = maxComponent0L;
 		maxL1 = maxComponent1L;
 
+
 		//Charge copy
-		std::copy(tmpQL0,tmpQL0+10,QL0);
-		std::copy(tmpQL1,tmpQL1+10,QL1);
+		std::copy(tmpQL0, tmpQL0 + 10, QL0);
+		std::copy(tmpQL1, tmpQL1 + 10, QL1);
 
 		//Amplitude copy
-		std::copy(tmpAL0,tmpAL0+10,AL0);
-		std::copy(tmpAL1,tmpAL1+10,AL1);
+		std::copy(tmpAL0, tmpAL0 + 10, AL0);
+		std::copy(tmpAL1, tmpAL1 + 10, AL1);
 
 		//crs bool
-		std::copy(tmpcrsTOPl,tmpcrsTOPl+22,crsTOPl);
-		std::copy(tmpcrsTOPh,tmpcrsTOPh+22,crsTOPh);
-		std::copy(tmpcrsBOTl,tmpcrsBOTl+22,crsBOTl);
-		std::copy(tmpcrsBOTh,tmpcrsBOTh+22,crsBOTh);
-
-
+		std::copy(tmpcrsTOPl, tmpcrsTOPl + 22, crsTOPl);
+		std::copy(tmpcrsTOPh, tmpcrsTOPh + 22, crsTOPh);
+		std::copy(tmpcrsBOTl, tmpcrsBOTl + 22, crsBOTl);
+		std::copy(tmpcrsBOTh, tmpcrsBOTh + 22, crsBOTh);
 
 		t->Fill();
+
 		japp->RootUnLock();
 	}
 
