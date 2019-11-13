@@ -37,7 +37,7 @@ CALORIMETER:CLUSTER_HIT_THR  10
 CALORIMETER:CLUSTER_SEED_THR 20
 
 
-INTVETO:HIT_THR_SINGLE    5   #thr in phe charge for a detector with single readout
+INTVETO:HIT_THR_SINGLE    1   #thr in phe charge for a detector with single readout
 INTVETO:HIT_THR_MULTI   -30   #thr in phe charge for a detector with multiple readout -> Irrelevant here
 INTVETO:HIT_DT_MULTI    2000  #time-window coincidence for hits in a counter with multiple readout ->Irrelevant here
 INTVETO:HIT_N_MULTI     2     #multiplicity for a detector with multi readout -> Irrelevant here
