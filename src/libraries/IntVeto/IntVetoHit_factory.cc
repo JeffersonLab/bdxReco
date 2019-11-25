@@ -59,7 +59,7 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	const IntVetoDigiHit* m_IntVetoDigiHit;
 	IntVetoHit *m_IntVetoHit = 0;
 
-	double Q, T, Qtot, Qmax, Tmax;
+	double A,Q, T, Qtot,Atot, Amax,Qmax, Tmax;
 	int nReadout;
 	int nCountersTHR;
 
@@ -83,10 +83,12 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	for (m_map_it = m_map.begin(); m_map_it != m_map.end(); m_map_it++) {
 		m_IntVetoDigiHits = m_map_it->second;
 		Qmax = -9999;
+		Amax = -9999;
 
 		if (m_IntVetoDigiHits.size() == 1) { //Single readout
 			m_IntVetoDigiHit = m_IntVetoDigiHits[0];
 			Q = m_IntVetoDigiHit->Qphe;
+			A = m_IntVetoDigiHit->Aphe;
 			T = m_IntVetoDigiHit->T;
 
 
@@ -96,6 +98,7 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 				m_IntVetoHit->m_channel.readout = 0;
 				m_IntVetoHit->Q = Q;
 				m_IntVetoHit->T = T;
+				m_IntVetoHit->A = A;
 				m_IntVetoHit->AddAssociatedObject(m_IntVetoDigiHit);
 				_data.push_back(m_IntVetoHit);
 			}
@@ -104,11 +107,13 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		else if ((m_hit_bottom_workAround) && (m_map_it->first.component == 3)) {
 			for (int idigi = 0; idigi < m_IntVetoDigiHits.size(); idigi++) {
 				Q = m_IntVetoDigiHits[idigi]->Qphe;
+				A = m_IntVetoDigiHits[idigi]->Aphe;
 				T = m_IntVetoDigiHits[idigi]->T;
 				if (Q > Qmax) {
 					m_IntVetoDigiHit = m_IntVetoDigiHits[idigi];
 					Qmax = Q;
 					Tmax = T;
+					Amax = A;
 				}
 			}
 			if (Qmax > m_THR_singleReadout) {
@@ -117,6 +122,7 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 				m_IntVetoHit->m_channel.readout = 0;
 				m_IntVetoHit->Q = Qmax;
 				m_IntVetoHit->T = Tmax;
+				m_IntVetoHit->A = Amax;
 				m_IntVetoHit->AddAssociatedObject(m_IntVetoDigiHit);
 				_data.push_back(m_IntVetoHit);
 			}
@@ -126,6 +132,7 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			Qtot = 0;
 			for (int idigi = 0; idigi < m_IntVetoDigiHits.size(); idigi++) {
 				Q = m_IntVetoDigiHits[idigi]->Qphe;
+				A = m_IntVetoDigiHits[idigi]->Aphe;
 				T = m_IntVetoDigiHits[idigi]->T;
 				if (Q > Qmax) {
 					Qmax = Q;
@@ -137,11 +144,12 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			if (Qmax < m_THR_multipleReadout) continue; //if the max charge is less than the treshold, by definition this hit is irrelevant.
 			for (int idigi = 0; idigi < m_IntVetoDigiHits.size(); idigi++) {
 				Q = m_IntVetoDigiHits[idigi]->Qphe;
+				A = m_IntVetoDigiHits[idigi]->Aphe;
 				T = m_IntVetoDigiHits[idigi]->T;
-
 				if ((Q > m_THR_multipleReadout) && (fabs(T - Tmax) < m_DT_multipleReadout)) {
 					nCountersTHR++;
 					Qtot += Q;
+					Atot += A;
 				}
 			}
 
@@ -151,9 +159,11 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 				m_IntVetoHit->m_channel = m_map_it->first;
 				m_IntVetoHit->Q = Qtot;
 				m_IntVetoHit->T = Tmax;
+				m_IntVetoHit->A = Amax;
 				for (int idigi = 0; idigi < m_IntVetoDigiHits.size(); idigi++) {
 					Q = m_IntVetoDigiHits[idigi]->Qphe;
 					T = m_IntVetoDigiHits[idigi]->T;
+					A = m_IntVetoDigiHits[idigi]->Aphe;
 					if ((Q > m_THR_multipleReadout) && (fabs(T - Tmax) < m_DT_multipleReadout)) {
 						m_IntVetoHit->AddAssociatedObject(m_IntVetoDigiHits[idigi]);
 					}

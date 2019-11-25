@@ -34,13 +34,14 @@ public:
 		AddString(items, "layer", "%4d", m_channel.layer);
 		AddString(items, "component", "%4d", m_channel.component);
 		AddString(items, "Q","%4f",Q);
+		AddString(items, "A","%4f",A);
 		AddString(items, "T","%4f",T);
 
 
 	}
 	TranslationTable::INT_VETO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
 
-	double Q,T; //Q is in phe
+	double A,Q,T; //A,Q is in phe
 
 	virtual TCanvas* Draw(int id=0) const;//!  //Exclude from root dictionary
 
