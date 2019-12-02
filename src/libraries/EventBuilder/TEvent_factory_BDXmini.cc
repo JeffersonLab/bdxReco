@@ -14,7 +14,7 @@ using namespace std;
 #include <DAQ/fa250Mode1CalibPedSubHit.h>
 
 #include <MC/MCType.h>
-#ifdef MC_SUPPORT_ENABLEfa250
+#ifdef MC_SUPPORT_ENABLE
 #include <Calorimeter/CalorimeterMCRealHit.h>
 #include <MC/GenParticle.h>
 #include <MC/UserMCData.h>
