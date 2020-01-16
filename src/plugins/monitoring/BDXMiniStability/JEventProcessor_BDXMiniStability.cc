@@ -186,7 +186,7 @@ jerror_t JEventProcessor_BDXMiniStability::evnt(JEventLoop *loop, uint64_t event
 	/*The following happens for EPICS events*/
 	if (!m_isMC) {
 		try {
-			loop->GetSingle(tData);
+			loop->GetSingle(tData); /*This excludes reading all slow-control events before the first physics event*/
 		} catch (unsigned long e) {
 			return OBJECT_NOT_AVAILABLE;
 		}
@@ -210,6 +210,7 @@ jerror_t JEventProcessor_BDXMiniStability::evnt(JEventLoop *loop, uint64_t event
 	if (!m_isT0Set) {
 		m_T0 = eData->time;
 		m_isT0Set = 1;
+		cout<<"BDXMiniStability set T0 to unix time: "<<m_T0<<std::endl;
 	}
 	m_T = (eData->time - m_T0);
 	index = m_T / m_dT;
@@ -295,7 +296,9 @@ jerror_t JEventProcessor_BDXMiniStability::erun(void) {
 	TDirectory *mainD = gDirectory;
 	gDirectory->mkdir("BDXMiniStability")->cd();
 
+	//Note that we are here assuming that each "bin" in the map is filled - i.e. all the indexes are reported.
 	m_nbins = allEvents.size();
+
 
 	//the "allEvents" map size should determine all binning for all histograms.
 	hBDXMiniStability_allEvents = new TH1D("hBDXMiniStability_allEvents", "hBDXMiniStability_allEvents", m_nbins, 0, m_nbins * m_dT);
@@ -312,21 +315,21 @@ jerror_t JEventProcessor_BDXMiniStability::erun(void) {
 	for (map_it = allEvents.begin(); map_it != allEvents.end(); map_it++) {
 		index = map_it->first;
 
-		hBDXMiniStability_allEvents->SetBinContent(index, 1. * allEvents[index] / m_dT);
-		hBDXMiniStability_allEvents->SetBinError(index, sqrt(1. * allEvents[index]) / m_dT);
+		hBDXMiniStability_allEvents->SetBinContent(index+1, 1. * allEvents[index] / m_dT);
+		hBDXMiniStability_allEvents->SetBinError(index+1, sqrt(1. * allEvents[index]) / m_dT);
 		hBDXMiniStability_allEvents_distr->Fill(1. * allEvents[index] / m_dT);
 
 		for (int itrg = 0; itrg < triggerDataBDXmini::nTriggersMAX; itrg++) {
-			hBDXMiniStability_trg[itrg]->SetBinContent(index, 1. * trgs[itrg][index] / m_dT);
-			hBDXMiniStability_trg[itrg]->SetBinError(index, sqrt(1. * trgs[itrg][index]) / m_dT);
+			hBDXMiniStability_trg[itrg]->SetBinContent(index+1, 1. * trgs[itrg][index] / m_dT);
+			hBDXMiniStability_trg[itrg]->SetBinError(index+1, sqrt(1. * trgs[itrg][index]) / m_dT);
 			hBDXMiniStability_trg_distr[itrg]->Fill(1. * trgs[itrg][index] / m_dT);
 		}
 
-		hBDXMiniStability_highE->SetBinContent(index, 1. * highE[index] / m_dT);
-		hBDXMiniStability_highE->SetBinError(index, sqrt(1. * highE[index]) / m_dT);
+		hBDXMiniStability_highE->SetBinContent(index+1, 1. * highE[index] / m_dT);
+		hBDXMiniStability_highE->SetBinError(index+1, sqrt(1. * highE[index]) / m_dT);
 
-		hBDXMiniStability_highE_antiVeto->SetBinContent(index, 1. * highE_antiVeto[index] / m_dT);
-		hBDXMiniStability_highE_antiVeto->SetBinError(index, sqrt(1. * highE_antiVeto[index]) / m_dT);
+		hBDXMiniStability_highE_antiVeto->SetBinContent(index+1, 1. * highE_antiVeto[index] / m_dT);
+		hBDXMiniStability_highE_antiVeto->SetBinError(index+1, sqrt(1. * highE_antiVeto[index]) / m_dT);
 
 	}
 

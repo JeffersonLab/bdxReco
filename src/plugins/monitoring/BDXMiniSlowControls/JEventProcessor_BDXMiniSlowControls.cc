@@ -17,6 +17,8 @@ using namespace jana;
 #include <DAQ/eventData.h>
 #include <EPICS/epicsData.h>
 
+#include <map>
+
 #include "TH1D.h"
 #include "TROOT.h"
 
@@ -150,6 +152,7 @@ jerror_t JEventProcessor_BDXMiniSlowControls::evnt(JEventLoop *loop, uint64_t ev
 	const eventData* eData;
 	const epicsData* epicsData;
 	/*The following happens for EPICS events*/
+
 	if (!m_isMC) {
 		try {
 			loop->GetSingle(eData);
@@ -167,8 +170,9 @@ jerror_t JEventProcessor_BDXMiniSlowControls::evnt(JEventLoop *loop, uint64_t ev
 
 	japp->RootWriteLock();
 	if (!m_isT0Set) {
-		m_T0 = eData->time;
+		m_T0 = eData->time; //Time of the first EPICS event here
 		m_isT0Set = 1;
+		cout << "BDXMiniSlowControls set T0 to unix time: " << m_T0 << std::endl;
 	}
 	m_T = (eData->time - m_T0);
 	index = m_T / m_dT;
@@ -236,7 +240,7 @@ jerror_t JEventProcessor_BDXMiniSlowControls::erun(void) {
 	gDirectory->mkdir("BDXMiniSlowControls")->cd();
 
 	/*Temperatures*/
-	m_nbins = arduinoEvents.size();
+	m_nbins = (arduinoEvents.rbegin())->first;
 	hBDXMiniSlowControls_arduinoT1 = new TH1D("hBDXMiniSlowControls_arduinoT1", "hBDXMiniSlowControls_arduinoT1", m_nbins, 0, m_nbins * m_dT);
 	hBDXMiniSlowControls_arduinoT2 = new TH1D("hBDXMiniSlowControls_arduinoT2", "hBDXMiniSlowControls_arduinoT2", m_nbins, 0, m_nbins * m_dT);
 	hBDXMiniSlowControls_arduinoH1 = new TH1D("hBDXMiniSlowControls_arduinoH1", "hBDXMiniSlowControls_arduinoH1", m_nbins, 0, m_nbins * m_dT);
@@ -244,10 +248,21 @@ jerror_t JEventProcessor_BDXMiniSlowControls::erun(void) {
 
 	for (arduinoEvents_it = arduinoEvents.begin(); arduinoEvents_it != arduinoEvents.end(); arduinoEvents_it++) {
 		index = arduinoEvents_it->first;
-		hBDXMiniSlowControls_arduinoT1->SetBinContent(index, 1. * arduinoT1[index] / arduinoEvents[index]);
-		hBDXMiniSlowControls_arduinoT2->SetBinContent(index, 1. * arduinoT2[index] / arduinoEvents[index]);
-		hBDXMiniSlowControls_arduinoH1->SetBinContent(index, 1. * arduinoH1[index] / arduinoEvents[index]);
-		hBDXMiniSlowControls_arduinoH2->SetBinContent(index, 1. * arduinoH2[index] / arduinoEvents[index]);
+		if (next(arduinoEvents_it) != arduinoEvents.end()) {
+			auto arduinoEvents_it2 = arduinoEvents_it;
+			arduinoEvents_it2++;
+			for (int index2 = index; index2 < arduinoEvents_it2->first; index2++) {
+				hBDXMiniSlowControls_arduinoT1->SetBinContent(index2 + 1, 1. * arduinoT1[index] / arduinoEvents[index]);
+				hBDXMiniSlowControls_arduinoT2->SetBinContent(index2 + 1, 1. * arduinoT2[index] / arduinoEvents[index]);
+				hBDXMiniSlowControls_arduinoH1->SetBinContent(index2 + 1, 1. * arduinoH1[index] / arduinoEvents[index]);
+				hBDXMiniSlowControls_arduinoH2->SetBinContent(index2 + 1, 1. * arduinoH2[index] / arduinoEvents[index]);
+			}
+		} else {
+			hBDXMiniSlowControls_arduinoT1->SetBinContent(index + 1, 1. * arduinoT1[index] / arduinoEvents[index]);
+			hBDXMiniSlowControls_arduinoT2->SetBinContent(index + 1, 1. * arduinoT2[index] / arduinoEvents[index]);
+			hBDXMiniSlowControls_arduinoH1->SetBinContent(index + 1, 1. * arduinoH1[index] / arduinoEvents[index]);
+			hBDXMiniSlowControls_arduinoH2->SetBinContent(index + 1, 1. * arduinoH2[index] / arduinoEvents[index]);
+		}
 	}
 	hBDXMiniSlowControls_arduinoT1->SetBinContent(m_nbins, hBDXMiniSlowControls_arduinoT1->GetBinContent(m_nbins - 1)); //just for graphics, last bin fix
 	hBDXMiniSlowControls_arduinoT2->SetBinContent(m_nbins, hBDXMiniSlowControls_arduinoT2->GetBinContent(m_nbins - 1)); //just for graphics, last bin fix
@@ -255,40 +270,66 @@ jerror_t JEventProcessor_BDXMiniSlowControls::erun(void) {
 	hBDXMiniSlowControls_arduinoH2->SetBinContent(m_nbins, hBDXMiniSlowControls_arduinoH2->GetBinContent(m_nbins - 1)); //just for graphics, last bin fix
 
 	/*DAQ*/
-	m_nbins = daqEvents.size();
+	m_nbins = (daqEvents.rbegin())->first;
 	hBDXMiniSlowControls_daqLT = new TH1D("hBDXMiniSlowControls_daqLT", "hBDXMiniSlowControls_daqT1", m_nbins, 0, m_nbins * m_dT);
 	for (daqEvents_it = daqEvents.begin(); daqEvents_it != daqEvents.end(); daqEvents_it++) {
 		index = daqEvents_it->first;
-		hBDXMiniSlowControls_daqLT->SetBinContent(index, 1. * daqLT[index] / daqEvents[index]);
+		if (next(daqEvents_it) != daqEvents.end()) {
+			auto daqEvents_it2 = daqEvents_it;
+			daqEvents_it2++;
+			for (int index2 = index; index2 < daqEvents_it2->first; index2++) {
+				hBDXMiniSlowControls_daqLT->SetBinContent(index2 + 1, 1. * daqLT[index] / daqEvents[index]);
+			}
+		} else {
+			hBDXMiniSlowControls_daqLT->SetBinContent(index + 1, 1. * daqLT[index] / daqEvents[index]);
+		}
 	}
 	hBDXMiniSlowControls_daqLT->SetBinContent(m_nbins, hBDXMiniSlowControls_daqLT->GetBinContent(m_nbins - 1)); //just for graphics, last bin fix
 
 	/*BEAM*/
-	m_nbins = beamEvents.size();
+	m_nbins = (beamEvents).rbegin()->first;
 	hBDXMiniSlowControls_beamI = new TH1D("hBDXMiniSlowControls_beamI", "hBDXMiniSlowControls_beamI", m_nbins, 0, m_nbins * m_dT);
 	hBDXMiniSlowControls_beamE = new TH1D("hBDXMiniSlowControls_beamE", "hBDXMiniSlowControls_beamE", m_nbins, 0, m_nbins * m_dT);
-
 	for (beamEvents_it = beamEvents.begin(); beamEvents_it != beamEvents.end(); beamEvents_it++) {
 		index = beamEvents_it->first;
-		hBDXMiniSlowControls_beamI->SetBinContent(index, 1. * beamI[index] / beamEvents[index]);
-		hBDXMiniSlowControls_beamE->SetBinContent(index, 1. * beamE[index] / beamEvents[index]);
+		if (next(beamEvents_it) != beamEvents.end()) {
+			auto beamEvents_it2 = beamEvents_it;
+			beamEvents_it2++;
+			for (int index2 = index; index2 < beamEvents_it2->first; index2++) {
+				hBDXMiniSlowControls_beamI->SetBinContent(index2 + 1, 1. * beamI[index] / beamEvents[index]);
+				hBDXMiniSlowControls_beamE->SetBinContent(index2 + 1, 1. * beamE[index] / beamEvents[index]);
+			}
+		} else {
+			hBDXMiniSlowControls_beamI->SetBinContent(index + 1, 1. * beamI[index] / beamEvents[index]);
+			hBDXMiniSlowControls_beamE->SetBinContent(index + 1, 1. * beamE[index] / beamEvents[index]);
+		}
 	}
 	hBDXMiniSlowControls_beamI->SetBinContent(m_nbins, hBDXMiniSlowControls_beamI->GetBinContent(m_nbins - 1)); //just for graphics, last bin fix
 	hBDXMiniSlowControls_beamE->SetBinContent(m_nbins, hBDXMiniSlowControls_beamE->GetBinContent(m_nbins - 1)); //just for graphics, last bin fix
 
 	/*TENT*/
-	m_nbins = envtentEvents.size();
+	m_nbins = (envtentEvents).rbegin()->first;
 	hBDXMiniSlowControls_envtentT1 = new TH1D("hBDXMiniSlowControls_envtentT1", "hBDXMiniSlowControls_envtentT1", m_nbins, 0, m_nbins * m_dT);
 	hBDXMiniSlowControls_envtentT2 = new TH1D("hBDXMiniSlowControls_envtentT2", "hBDXMiniSlowControls_envtentT2", m_nbins, 0, m_nbins * m_dT);
 	hBDXMiniSlowControls_envtentH1 = new TH1D("hBDXMiniSlowControls_envtentH1", "hBDXMiniSlowControls_envtentH1", m_nbins, 0, m_nbins * m_dT);
 	hBDXMiniSlowControls_envtentH2 = new TH1D("hBDXMiniSlowControls_envtentH2", "hBDXMiniSlowControls_envtentH2", m_nbins, 0, m_nbins * m_dT);
-
 	for (envtentEvents_it = envtentEvents.begin(); envtentEvents_it != envtentEvents.end(); envtentEvents_it++) {
 		index = envtentEvents_it->first;
-		hBDXMiniSlowControls_envtentT1->SetBinContent(index, 1. * envtentT1[index] / envtentEvents[index]);
-		hBDXMiniSlowControls_envtentT2->SetBinContent(index, 1. * envtentT2[index] / envtentEvents[index]);
-		hBDXMiniSlowControls_envtentH1->SetBinContent(index, 1. * envtentH1[index] / envtentEvents[index]);
-		hBDXMiniSlowControls_envtentH2->SetBinContent(index, 1. * envtentH2[index] / envtentEvents[index]);
+		if (next(envtentEvents_it) != envtentEvents.end()) {
+			auto envtentEvents_it2 = envtentEvents_it;
+			envtentEvents_it2++;
+			for (int index2 = index; index2 < envtentEvents_it2->first; index2++) {
+				hBDXMiniSlowControls_envtentT1->SetBinContent(index2 + 1, 1. * envtentT1[index] / envtentEvents[index]);
+				hBDXMiniSlowControls_envtentT2->SetBinContent(index2 + 1, 1. * envtentT2[index] / envtentEvents[index]);
+				hBDXMiniSlowControls_envtentH1->SetBinContent(index2 + 1, 1. * envtentH1[index] / envtentEvents[index]);
+				hBDXMiniSlowControls_envtentH2->SetBinContent(index2 + 1, 1. * envtentH2[index] / envtentEvents[index]);
+			}
+		} else {
+			hBDXMiniSlowControls_envtentT1->SetBinContent(index + 1, 1. * envtentT1[index] / envtentEvents[index]);
+			hBDXMiniSlowControls_envtentT2->SetBinContent(index + 1, 1. * envtentT2[index] / envtentEvents[index]);
+			hBDXMiniSlowControls_envtentH1->SetBinContent(index + 1, 1. * envtentH1[index] / envtentEvents[index]);
+			hBDXMiniSlowControls_envtentH2->SetBinContent(index + 1, 1. * envtentH2[index] / envtentEvents[index]);
+		}
 
 	}
 	hBDXMiniSlowControls_envtentT1->SetBinContent(m_nbins, hBDXMiniSlowControls_envtentT1->GetBinContent(m_nbins - 1)); //just for graphics, last bin fix
@@ -296,6 +337,7 @@ jerror_t JEventProcessor_BDXMiniSlowControls::erun(void) {
 	hBDXMiniSlowControls_envtentH1->SetBinContent(m_nbins, hBDXMiniSlowControls_envtentH1->GetBinContent(m_nbins - 1)); //just for graphics, last bin fix
 	hBDXMiniSlowControls_envtentH2->SetBinContent(m_nbins, hBDXMiniSlowControls_envtentH2->GetBinContent(m_nbins - 1)); //just for graphics, last bin fix
 
+	/*SAVE*/
 	mainD->cd();
 	japp->RootUnLock();
 	if (m_ROOTOutput != 0) {
