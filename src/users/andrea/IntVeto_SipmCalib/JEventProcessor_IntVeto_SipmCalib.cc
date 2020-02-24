@@ -46,7 +46,7 @@ JEventProcessor_IntVeto_SipmCalib::JEventProcessor_IntVeto_SipmCalib() :
 		m_ROOTOutput(0) {
 	m_isFirstCallToBrun = 1;
 	h = new TH1D("h", "h", 500, -0.5, 499.5);
-	t=0;
+	t = 0;
 }
 
 //------------------
@@ -68,6 +68,10 @@ jerror_t JEventProcessor_IntVeto_SipmCalib::init(void) {
 	//  ... fill historgrams or trees ...
 	// japp->RootUnLock();
 	//
+
+	triggerBit = -1;
+	gPARMS->SetDefaultParameter("andrea:IntVeto_SipmCalib:triggerBit", triggerBit);
+
 	japp->RootWriteLock();
 	t = new TTree("IntVeto_SipmCalib", "IntVeto_SipmCalib");
 
@@ -156,37 +160,28 @@ jerror_t JEventProcessor_IntVeto_SipmCalib::evnt(JEventLoop *loop, uint64_t even
 		word1 = tData->triggerWords[ii * 2];
 		word2 = tData->triggerWords[ii * 2 + 1];
 
-		tWord=word1;
-
-	/*	for (int jj = 0; jj < nTriggersMAX; jj++) {
-			if ((word1 >> jj) & 0x1) {
-				nTriggers++;
-				nTriggerSingles[jj]++;
-				trgTimes[jj].push_back(word2);
-			}
-		}*/
-	}
-
-	japp->RootWriteLock();
-	//  ... fill historgrams or trees ...
-	for (data_it = data.begin(); data_it < data.end(); data_it++) {
-		m_sector = (*data_it)->m_channel.int_veto->sector;
-		m_layer = (*data_it)->m_channel.int_veto->layer;
-		m_component = (*data_it)->m_channel.int_veto->component;
-		m_readout = (*data_it)->m_channel.int_veto->readout;
-
-		m_type = (*data_it)->m_type;
-		T = (*data_it)->T;
-		A = (*data_it)->Araw;
-		Qphe = (*data_it)->Qphe;
-		Qraw = (*data_it)->Qraw;
-
-		eventNumber = eventnumber;
-
-		t->Fill();
+		tWord = word1;
 
 	}
-	japp->RootUnLock();
+
+	if ((triggerBit == -1) || (((tWord >> triggerBit) & 0x1) == 0x1)) {
+		japp->RootWriteLock();
+		//  ... fill historgrams or trees ...
+		for (data_it = data.begin(); data_it < data.end(); data_it++) {
+			m_sector = (*data_it)->m_channel.int_veto->sector;
+			m_layer = (*data_it)->m_channel.int_veto->layer;
+			m_component = (*data_it)->m_channel.int_veto->component;
+			m_readout = (*data_it)->m_channel.int_veto->readout;
+			m_type = (*data_it)->m_type;
+			T = (*data_it)->T;
+			A = (*data_it)->Araw;
+			Qphe = (*data_it)->Qphe;
+			Qraw = (*data_it)->Qraw;
+			eventNumber = eventnumber;
+			t->Fill();
+		}
+		japp->RootUnLock();
+	}
 	return NOERROR;
 }
 

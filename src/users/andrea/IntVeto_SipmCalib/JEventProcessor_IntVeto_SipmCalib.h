@@ -38,6 +38,7 @@ class JEventProcessor_IntVeto_SipmCalib:public jana::JEventProcessor{
 
 		JROOTOutput *m_ROOTOutput;
 
+		int triggerBit;
 
 };
 
