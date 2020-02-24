@@ -22,9 +22,6 @@ void epicsData::decode(string rawData,int deltaTime) {
 		this->values[desc] = val;        //the [] operator takes care of adding a new record if key "desc" doesn't exists
 		this->times[desc]  = this->time+deltaTime; //time should be set before calling this method
 	}
-
-
-
 }
 bool epicsData::hasData(string key) const{
 	bool ret = false;
