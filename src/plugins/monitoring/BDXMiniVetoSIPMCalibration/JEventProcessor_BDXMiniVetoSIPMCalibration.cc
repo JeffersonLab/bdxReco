@@ -26,9 +26,17 @@ static const int nTOT = 10;
 static TH1D *hBDXMiniVetoSIPMCalibrationQL0[nTOT] = { 0 };
 static TH1D *hBDXMiniVetoSIPMCalibrationQL1[nTOT] = { 0 };
 
-//PHE
-static TH1D *hBDXMiniVetoSIPMCalibrationPHEL0[nTOT] = { 0 };
-static TH1D *hBDXMiniVetoSIPMCalibrationPHEL1[nTOT] = { 0 };
+//Charge-PHE
+static TH1D *hBDXMiniVetoSIPMCalibrationQPHEL0[nTOT] = { 0 };
+static TH1D *hBDXMiniVetoSIPMCalibrationQPHEL1[nTOT] = { 0 };
+
+//Amplitude
+static TH1D *hBDXMiniVetoSIPMCalibrationAL0[nTOT] = { 0 };
+static TH1D *hBDXMiniVetoSIPMCalibrationAL1[nTOT] = { 0 };
+
+//Amplitude-PHE
+static TH1D *hBDXMiniVetoSIPMCalibrationAPHEL0[nTOT] = { 0 };
+static TH1D *hBDXMiniVetoSIPMCalibrationAPHEL1[nTOT] = { 0 };
 
 extern "C" {
 void InitPlugin(JApplication *app) {
@@ -78,24 +86,40 @@ jerror_t JEventProcessor_BDXMiniVetoSIPMCalibration::init(void) {
 	/*Create all the histograms*/
 
 	double Qmin, Qmax, Emin, Emax, Amin, Amax;
-	int NQ;
+	int NA,NQ;
 
 	if (m_isMC) {
 		Qmin = -100;
 		Qmax = 300;
+
+		Amin=-20;
+		Amax=70;
+
 		NQ = 500;
+		NA = 500;
 	} else {
 		Qmin = -100.;
-		Qmax = 300;
+		Qmax = 1000;
+
+		Amin=-20;
+		Amax=70;
+
 		NQ = 500;
+		NA = 500;
 	}
 
 	for (int ii = 0; ii < nTOT; ii++) {
 		hBDXMiniVetoSIPMCalibrationQL0[ii] = new TH1D(Form("hBDXMiniVetoSIPMQ_L0_C%i", ii + 1), Form("hBDXMiniVetoSIPMQ_L0_C%i", ii + 1), NQ, Qmin, Qmax);
 		hBDXMiniVetoSIPMCalibrationQL1[ii] = new TH1D(Form("hBDXMiniVetoSIPMQ_L1_C%i", ii + 1), Form("hBDXMiniVetoSIPMQ_L1_C%i", ii + 1), NQ, Qmin, Qmax);
 
-		hBDXMiniVetoSIPMCalibrationPHEL0[ii] = new TH1D(Form("hBDXMiniVetoSIPMPHE_L0_C%i", ii + 1), Form("hBDXMiniVetoSIPMPHE_L0_c%i", ii + 1), NQ, -3,10);
-		hBDXMiniVetoSIPMCalibrationPHEL1[ii] = new TH1D(Form("hBDXMiniVetoSIPMPHE_L1_C%i", ii + 1), Form("hBDXMiniVetoSIPMPHE_L1_c%i", ii + 1), NQ, -3,10);
+		hBDXMiniVetoSIPMCalibrationQPHEL0[ii] = new TH1D(Form("hBDXMiniVetoSIPMQPHE_L0_C%i", ii + 1), Form("hBDXMiniVetoSIPMQPHE_L0_c%i", ii + 1), NQ, -3, 10);
+		hBDXMiniVetoSIPMCalibrationQPHEL1[ii] = new TH1D(Form("hBDXMiniVetoSIPMQPHE_L1_C%i", ii + 1), Form("hBDXMiniVetoSIPMQPHE_L1_c%i", ii + 1), NQ, -3, 10);
+
+		hBDXMiniVetoSIPMCalibrationAL0[ii] = new TH1D(Form("hBDXMiniVetoSIPMA_L0_C%i", ii + 1), Form("hBDXMiniVetoSIPMA_L0_C%i", ii + 1), NA, Amin, Amax);
+		hBDXMiniVetoSIPMCalibrationAL1[ii] = new TH1D(Form("hBDXMiniVetoSIPMA_L1_C%i", ii + 1), Form("hBDXMiniVetoSIPMA_L1_C%i", ii + 1), NA, Amin, Amax);
+
+		hBDXMiniVetoSIPMCalibrationAPHEL0[ii] = new TH1D(Form("hBDXMiniVetoSIPMAPHE_L0_C%i", ii + 1), Form("hBDXMiniVetoSIPMAPHE_L0_c%i", ii + 1), NA, -3, 10);
+		hBDXMiniVetoSIPMCalibrationAPHEL1[ii] = new TH1D(Form("hBDXMiniVetoSIPMAPHE_L1_C%i", ii + 1), Form("hBDXMiniVetoSIPMAPHE_L1_c%i", ii + 1), NA, -3, 10);
 
 	}
 
@@ -185,15 +209,19 @@ jerror_t JEventProcessor_BDXMiniVetoSIPMCalibration::evnt(JEventLoop *loop, uint
 		//A.C. skip SIPM in csc (0,1,2), i.e. Sector0 Layer0 Component3
 		if ((layer == 0) && (component == 3)) continue;
 
-
 		if (layer == 0) {
 			hBDXMiniVetoSIPMCalibrationQL0[component - 1]->Fill(veto_hit->Qraw);
-			hBDXMiniVetoSIPMCalibrationPHEL0[component - 1]->Fill(veto_hit->Qphe);
+			hBDXMiniVetoSIPMCalibrationQPHEL0[component - 1]->Fill(veto_hit->Qphe);
+
+			hBDXMiniVetoSIPMCalibrationAL0[component - 1]->Fill(veto_hit->Araw);
+			hBDXMiniVetoSIPMCalibrationAPHEL0[component - 1]->Fill(veto_hit->Aphe);
 		} else if (layer == 1) {
 			hBDXMiniVetoSIPMCalibrationQL1[component - 1]->Fill(veto_hit->Qraw);
-			hBDXMiniVetoSIPMCalibrationPHEL1[component - 1]->Fill(veto_hit->Qphe);
-		}
+			hBDXMiniVetoSIPMCalibrationQPHEL1[component - 1]->Fill(veto_hit->Qphe);
 
+			hBDXMiniVetoSIPMCalibrationAL1[component - 1]->Fill(veto_hit->Araw);
+			hBDXMiniVetoSIPMCalibrationAPHEL1[component - 1]->Fill(veto_hit->Aphe);
+		}
 
 	}
 
@@ -212,8 +240,13 @@ jerror_t JEventProcessor_BDXMiniVetoSIPMCalibration::erun(void) {
 		for (int ii = 0; ii < nTOT; ii++) {
 			m_ROOTOutput->AddObject(hBDXMiniVetoSIPMCalibrationQL0[ii]);
 			m_ROOTOutput->AddObject(hBDXMiniVetoSIPMCalibrationQL1[ii]);
-			m_ROOTOutput->AddObject(hBDXMiniVetoSIPMCalibrationPHEL0[ii]);
-			m_ROOTOutput->AddObject(hBDXMiniVetoSIPMCalibrationPHEL1[ii]);
+			m_ROOTOutput->AddObject(hBDXMiniVetoSIPMCalibrationQPHEL0[ii]);
+			m_ROOTOutput->AddObject(hBDXMiniVetoSIPMCalibrationQPHEL1[ii]);
+
+			m_ROOTOutput->AddObject(hBDXMiniVetoSIPMCalibrationAL0[ii]);
+			m_ROOTOutput->AddObject(hBDXMiniVetoSIPMCalibrationAL1[ii]);
+			m_ROOTOutput->AddObject(hBDXMiniVetoSIPMCalibrationAPHEL0[ii]);
+			m_ROOTOutput->AddObject(hBDXMiniVetoSIPMCalibrationAPHEL1[ii]);
 		}
 	}
 
