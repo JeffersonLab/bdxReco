@@ -51,5 +51,7 @@ BDXMiniStability:dT           60         #Time-width (in s) of a bin for the rat
 BDXMiniStability:thrEneTot   100         #Threshold for the "high-energy" EM clusters - total energy
 BDXMiniStability:thrEneSeed   20         #Threshold for the "high-energy" EM clusters - seed energy
  
-
+#
+#IntVeto calibration for Sipm :rnmd tirgger
+andrea:IntVeto_SipmCalib:triggerBit 31
 
