@@ -29,7 +29,7 @@ class BDXMiniVetoSIPMCalibrationHit:public jana::JObject{
 		
 		TranslationTable::INT_VETO_Index_t m_channel;      //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
 
-		double Qphe, Qraw, T, A;
+		double Qphe, Qraw, T, Araw,Aphe;
 
 
 };
