@@ -1,11 +1,11 @@
 import os
 from utils import *
 
-Import('env','debugSuffix','et_enable')
+Import('env','debugSuffix')
 
 # Loop over libraries, building each
 #subdirs = ['JANA', 'plugins', 'utilities', 'unit_tests']
 subdirs = ['JANA', 'plugins', 'utilities']
 
 AddROOTdict(env,'./JANA/',Dir( '#/src/external/jana_0.7.7p1/src/JANA/').srcnode().abspath)
-SConscript(dirs=subdirs, exports='env debugSuffix et_enable', duplicate=0)
+SConscript(dirs=subdirs, exports='env debugSuffix', duplicate=0)

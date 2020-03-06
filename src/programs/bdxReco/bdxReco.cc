@@ -13,10 +13,8 @@ using namespace jana;
 //factory generators
 #include <system/JFactoryGenerator_system.h>
 #include <DAQ/JFactoryGenerator_DAQ.h>
-#include <EPICS/JFactoryGenerator_EPICS.h>
 #include <TT/JFactoryGenerator_TT.h>
 #include <IntVeto/JFactoryGenerator_IntVeto.h>
-#include <ExtVeto/JFactoryGenerator_ExtVeto.h>
 #include <Calorimeter/JFactoryGenerator_Calorimeter.h>
 #include <Paddles/JFactoryGenerator_Paddles.h>
 #include <BDXmini/JFactoryGenerator_BDXmini.h>
@@ -59,16 +57,12 @@ int main(int narg, char *argv[])
 	jout<<"JFactoryGenerator_system DONE"<<endl;
 	app.AddFactoryGenerator(new JFactoryGenerator_DAQ());
 	jout<<"JFactoryGenerator_DAQ DONE"<<endl;
-	app.AddFactoryGenerator(new JFactoryGenerator_EPICS());
-	jout<<"JFactoryGenerator_EPICS DONE"<<endl;
 #ifdef MC_SUPPORT_ENABLE
 	app.AddFactoryGenerator(new JFactoryGenerator_MC());
 	jout<<"JFactoryGenerator_MC DONE"<<endl;
 #endif
 	app.AddFactoryGenerator(new JFactoryGenerator_TT());
 	jout<<"JFactoryGenerator_TT DONE"<<endl;
-	app.AddFactoryGenerator(new JFactoryGenerator_ExtVeto());
-	jout<<"JFactoryGenerator_ExtVeto DONE"<<endl;
 	app.AddFactoryGenerator(new JFactoryGenerator_IntVeto());
 	jout<<"JFactoryGenerator_IntVeto DONE"<<endl;
 	app.AddFactoryGenerator(new JFactoryGenerator_Calorimeter());

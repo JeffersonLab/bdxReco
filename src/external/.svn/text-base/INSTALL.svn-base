@@ -1,0 +1,122 @@
+
+Installation instructions for JANA
+ 6/ 5/2008 David Lawrence
+ 2/ 7/2010 Updated DL
+ 3/27/2012 Updated DL
+ 1/27/2014 Updated DL
+
+
+Quick Start
+--------------------
+> tar xzvf jana_0.7.3.tgz
+> cd jana_0.7.3
+> setenv BMS_OSNAME `./SBMS/osrelease.pl`
+> scons -j8 install
+
+
+Obtaining the Source
+--------------------
+The source may be obtained as a tarball from the JANA website at:
+
+http://www.jlab.org/JANA/downloads.php
+
+The stable versions are numbered while the "jana_svn_daily_linux.tgz"
+file is regenerated from the repository nightly and should be 
+considered unstable.
+
+Unpack the tarball containing the source. For example:
+
+>tar xzf path-to-tarball/jana_0.7.3.tgz
+
+
+Configuring
+------------------------------------------------
+Configuration is now done as part of the build phase
+by scons. Optional package support is enabled in
+most cases by setting the appropriate environment
+variable. One variable you should set prior to 
+running scons is the BMS_OSNAME environment variable.
+This is used as the names of the build and install
+directories so that JANA can be simultaneously built 
+on multiple platforms using the same network-mounted
+source directory. The script SBMS/osrelease.pl may be
+helpful in setting this, but you are free to set it
+to whatever you choose.
+
+Here are the optional packages and their
+associated environment variables.
+
+xerces-c   XERCESCROOT
+ROOT       ROOTSYS
+CCDB       CCDB_HOME
+curl       CURL_HOME
+
+Some packages (e.g. xerces-c) may be installed in system
+directories using the systems package manager. In this
+case, you do not need to set XERCESCROOT and support
+for it will be automatically included. This is not true
+for most other packages.
+
+The CURL package is not required to get CURL support. If the
+environment variable is not set to point to the library,
+then JANA is configured to issue shell commands to run an
+external curl exectuable if needed. In that case though, you
+must make sure that "curl" is in your PATH when the JANA 
+program is run.
+
+Also note that if CCDB is accessed through JANA, then the
+JANA_CALIB_URL environment variable is used rather than
+CCDB_CONNECTION. These have the same format and so can 
+(and should) be set to the same value if you are using CCDB.
+
+
+
+Building and Installing
+---------------------------------------
+To build JANA and install it, run "scons -jN install" where
+"N" is the number of threads you wish to use to build. If
+you only want to use 1 thread, you can leave out the -jN
+argument altogether.
+
+
+> scons -jN install
+
+The binaries and headers will be installed in a directory 
+parallel to src with the directory name of whatever the
+BMS_OSNAME environment variable is set to. After installation
+is complete, you should source the appropriate setenv script
+to setup your environment to use JANA. 
+
+> source /path/to/JANA/$BMS_OSNAME/setenv.csh
+
+or
+
+> . /path/to/JANA/$BMS_OSNAME/setenv.sh
+
+
+Note that whenever you do an "scons install" it will overwrite
+the setenv scripts using your current environment variables.
+
+
+You can test that the build succeeded by running one of the utility
+programs. For example, the "jana" utility:
+
+> cd ./bin/jana --janaversion
+
+
+A plugin for testing JANA with fake events is also included and
+can be run like this:
+
+> jana -PPLUGINS=TestSpeed
+
+to run with 16 threads:
+
+> jana -PPLUGINS=TestSpeed -PNTHREADS=16
+
+
+Please direct questions/comments to:
+
+Contact: David Lawrence  davidl@jlab.org
+
+
+

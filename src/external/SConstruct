@@ -1,5 +1,5 @@
 import glob
-Import('env debug et_enable')
+Import('env debug')
 
 
 # Loop over libraries, building each
@@ -13,19 +13,18 @@ env.SharedLibrary(source=src,target='#/lib/bdxRecoExt')
 
 env.AppendUnique(CPPPATH=Dir('#/src/external/jana_0.7.7p1/src/').srcnode().abspath)
 env.AppendUnique(CPPPATH=Dir('#/src/external/jana_0.7.7p1/src/JANA').srcnode().abspath)
-env.SConscript('jana_0.7.7p1/SConstruct',exports="env debug et_enable")
+env.SConscript('jana_0.7.7p1/SConstruct',exports="env debug")
 
 # Special libraries
-if (et_enable):
-   #cMSG
-   env.Append(CPPPATH=Dir('#/src/external/cMsg-3.6/src/regexp').srcnode().abspath)
-   env.Append(CPPPATH=Dir('#/src/external/cMsg-3.6/src/libsrc').srcnode().abspath)
-   env.Append(CPPPATH=Dir('#/src/external/cMsg-3.6/src/libsrc++').srcnode().abspath)
-   env.SConscript('cMsg-3.6/SConstruct',exports="env debug")
-   #ROOTSPY
-   env.Append(CPPPATH=Dir('#/src/external/RootSpy/src/libRootSpy').srcnode().abspath)
-   env.Append(CPPPATH=Dir('#/src/external/RootSpy/src/libRootSpy-client').srcnode().abspath)
-   env.SConscript('RootSpy/SConstruct',exports='env debug')
-   #ET   						 
-   env.Append(CPPPATH=Dir('#/src/external/et/src/libsrc').srcnode().abspath)
-   env.SConscript('et/SConstruct',exports='env debug')
+
+#cMSG
+env.Append(CPPPATH=Dir('#/src/external/cMsg-3.6/src/regexp').srcnode().abspath)
+env.Append(CPPPATH=Dir('#/src/external/cMsg-3.6/src/libsrc').srcnode().abspath)
+env.Append(CPPPATH=Dir('#/src/external/cMsg-3.6/src/libsrc++').srcnode().abspath)
+env.SConscript('cMsg-3.6/SConstruct',exports="env debug")
+
+#ROOTSPY
+env.Append(CPPPATH=Dir('#/src/external/RootSpy/src/libRootSpy').srcnode().abspath)
+env.Append(CPPPATH=Dir('#/src/external/RootSpy/src/libRootSpy-client').srcnode().abspath)
+env.SConscript('RootSpy/SConstruct',exports='env debug')
+  

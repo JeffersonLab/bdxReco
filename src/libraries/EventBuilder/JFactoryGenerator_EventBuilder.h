@@ -13,8 +13,6 @@
 
 
 //#include "MCEvent_factory.h"
-#include "CataniaEvent_factory.h"
-#include "TEvent_factory_CataniaProto2.h"
 #include "TEvent_factory_JLabFlux.h"
 #include "TEvent_factory_BDXmini.h"
 
@@ -38,8 +36,6 @@ public:
 	jerror_t GenerateFactories(jana::JEventLoop *loop) {
 
 
-		loop->AddFactory(new CataniaEvent_factory());
-		loop->AddFactory(new TEvent_factory_CataniaProto2());
 		loop->AddFactory(new TEvent_factory_JLabFlux());
 		loop->AddFactory(new TEvent_factory_BDXmini());
 #ifdef MC_SUPPORT_ENABLE

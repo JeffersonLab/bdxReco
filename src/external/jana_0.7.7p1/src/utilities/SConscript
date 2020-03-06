@@ -1,12 +1,11 @@
 
 import os
 from utils import *
-Import('env debugSuffix et_enable')
+Import('env debugSuffix')
 
 # Loop over executables, building each
 subdirs = ['jana', 'janadump', 'jcalibcopy', 'jcalibread', 'jgeomread', 'jresource']
-if (et_enable):
-    subdirs += ['janactl']
+subdirs += ['janactl']
 
 env.AppendUnique(LIBS="JANA")
 

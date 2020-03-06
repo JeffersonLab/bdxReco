@@ -1,5 +1,5 @@
 from utils import *
-Import('env debug et_enable')
+Import('env debug')
 
 plugin_types = getSubdirs('./')
 
@@ -9,9 +9,6 @@ for type in plugin_types:
     plugins = getSubdirs(str(type))
     for plugin in plugins:
         print  bcolors.OKBLUE,"Found plugin ",plugin," for type ",type,bcolors.ENDC
-        if (("rootspy" in plugin) and (et_enable == 0)):
-            print bcolors.RED,"Ignoring this since no ET support ",bcolors.ENDC
-            continue
         #save the relative dir and the absolute dir
         reldir = str(type)+'/'+str(plugin)
         absdir = Dir('#/src/plugins/'+reldir).srcnode().abspath   

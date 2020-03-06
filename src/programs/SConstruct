@@ -1,5 +1,5 @@
 import glob
-Import('env et_enable')
+Import('env')
 
 # Loop over libraries, building each
 this_env=env.Clone()
@@ -7,12 +7,12 @@ this_env.PrependUnique(LIBS="libbdxRecoExt")
 this_env.PrependUnique(LIBS="libbdxReco")
 this_env.PrependUnique(LIBS='JANA')
 
-if (et_enable):
-   this_env.AppendUnique(LIBS='cmsg')
-   this_env.AppendUnique(LIBS='cmsgxx')
-   this_env.AppendUnique(LIBS='cmsgRegex')
-   this_env.AppendUnique(LIBS='RootSpy')
-   this_env.AppendUnique(LIBS="libet")
+
+this_env.AppendUnique(LIBS='cmsg')
+this_env.AppendUnique(LIBS='cmsgxx')
+this_env.AppendUnique(LIBS='cmsgRegex')
+this_env.AppendUnique(LIBS='RootSpy')
+  
 
 progs=['bdxReco']
 for prog in progs:

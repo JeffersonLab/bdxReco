@@ -11,8 +11,7 @@ using namespace std;
 #include "string_utilities.h"
 //DAQ
 #include <DAQ/eventData.h>
-//EPICS
-#include <EPICS/epicsData.h>
+
 // TT
 #include <TT/TranslationTable.h>
 
@@ -156,7 +155,7 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber) {
 
 	const eventData* tData;
 	vector<const TEvent*> events;
-	const epicsData* eData;
+
 
 	/*For non-MC case, check that:
 	 * There's a valid eventData (true for both DAQ and EPICS)
@@ -170,12 +169,7 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			bout << "No eventData bank this event " << endl;
 			return OBJECT_NOT_AVAILABLE;
 		}
-		/*This is the EPICS part. The call here will force getting data from the epicsDataProcessed_factory, that takes care of persistency*/
-		try {
-			loop->GetSingle(eData);
-		} catch (unsigned long e) {
-			return OBJECT_NOT_AVAILABLE;
-		}
+
 
 		if (tData->eventType != eventSource::DAQ) {
 			//	jout<<"BDXEventProcessor exit: tData->eventType: "<<tData->eventType<<endl;
@@ -187,10 +181,8 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		if (events.size() != 1) {
 			return RESOURCE_UNAVAILABLE;
 		}
-		/*Add EPICS data in case of non-MC*/
-		if (m_output != 0) {
 
-			if (m_isMC == 0) events[0]->getEventHeader()->copyEpicsData(eData);
+		if (m_output != 0) {
 			japp->RootWriteLock();
 			m_event = events[0];
 			m_eventDST->Fill();

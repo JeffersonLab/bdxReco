@@ -23,8 +23,6 @@ using namespace jana;
 #include <IntVeto/IntVetoDigiHit.h>
 #include <IntVeto/IntVetoSiPMHit.h>
 
-#include <ExtVeto/ExtVetoPMTHit.h>
-#include <ExtVeto/ExtVetoDigiHit.h>
 
 #include <system/JROOTOutput.h>
 

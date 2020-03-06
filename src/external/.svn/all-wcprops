@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/repos/!svn/ver/2446/tags/jana_0.7.7p1
+END
+INSTALL
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/repos/!svn/ver/2445/tags/jana_0.7.7p1/INSTALL
+END
+SConstruct
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/repos/!svn/ver/2445/tags/jana_0.7.7p1/SConstruct
+END
+CHANGES
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/repos/!svn/ver/2446/tags/jana_0.7.7p1/CHANGES
+END
