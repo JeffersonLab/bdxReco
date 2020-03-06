@@ -26,7 +26,7 @@ TCanvas* IntVetoHit::Draw(int id) const {
 		Nsamples = wave->samples.size();
 		hWaves.push_back(
 				new TH1D(Form("h%i_%i_%i_%i", hits[ih]->m_channel.int_veto->sector, hits[ih]->m_channel.int_veto->layer, hits[ih]->m_channel.int_veto->component, hits[ih]->m_channel.int_veto->readout),
-						Form("h%i_%i_%i_%i", hits[ih]->m_channel.int_veto->sector, hits[ih]->m_channel.int_veto->layer, hits[ih]->m_channel.int_veto->component, hits[ih]->m_channel.int_veto->readout), Nsamples, -0.5*wave->m_dT, (Nsamples - 0.5)**wave->m_dT));
+						Form("h%i_%i_%i_%i", hits[ih]->m_channel.int_veto->sector, hits[ih]->m_channel.int_veto->layer, hits[ih]->m_channel.int_veto->component, hits[ih]->m_channel.int_veto->readout), Nsamples, -0.5*wave->m_dT, (Nsamples - 0.5)*wave->m_dT));
 		wave->toHisto(hWaves[ih]);
 	}
 	if (id >= 0) {
