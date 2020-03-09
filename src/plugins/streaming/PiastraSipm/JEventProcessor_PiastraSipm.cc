@@ -141,7 +141,14 @@ jerror_t JEventProcessor_PiastraSipm::evnt(JEventLoop *loop, uint64_t eventnumbe
 
 	vector<const IntVetoDigiHit*> hits;
 
+	vector<int> idx;
 
+
+
+	for (int ii=0;ii<hits.size();ii++){
+		const IntVetoDigiHit* hit=hits[ii];
+
+	}
 
 
 	return NOERROR;
