@@ -46,6 +46,7 @@ private:
 	map<unsigned long int, unsigned int> daqEvents;
 	map<unsigned long int, unsigned int>::iterator daqEvents_it;
 	map<unsigned long int, double> daqLT;
+	map<unsigned long int, double> daqT[16];
 
 	map<unsigned long int, unsigned int> beamEvents;
 	map<unsigned long int, unsigned int>::iterator beamEvents_it;
@@ -53,7 +54,7 @@ private:
 
 	map<unsigned long int, unsigned int> envtentEvents;
 	map<unsigned long int, unsigned int>::iterator envtentEvents_it;
-	map<unsigned long int, double> envtentT1, envtentT2,envtentH1,envtentH2;
+	map<unsigned long int, double> envtentT1, envtentT2, envtentH1, envtentH2;
 
 };
 
