@@ -268,7 +268,11 @@ jerror_t JEventProcessor_BDXMiniSlowControls::erun(void) {
 	hBDXMiniSlowControls_arduinoT2 = new TH1D("hBDXMiniSlowControls_arduinoT2", "hBDXMiniSlowControls_arduinoT2", m_nbins, 0, m_nbins * m_dT);
 	hBDXMiniSlowControls_arduinoH1 = new TH1D("hBDXMiniSlowControls_arduinoH1", "hBDXMiniSlowControls_arduinoH1", m_nbins, 0, m_nbins * m_dT);
 	hBDXMiniSlowControls_arduinoH2 = new TH1D("hBDXMiniSlowControls_arduinoH2", "hBDXMiniSlowControls_arduinoH2", m_nbins, 0, m_nbins * m_dT);
-
+	for (int ii = 0; ii < 16; ii++) {
+		int slot = ii / 4;
+		int ch = ii % 4;
+		hBDXMiniSlowControls_daqT[ii] = new TH1D(Form("hBDXMiniSlowControls_daqT_slot%i_ch%i", slot, ch * 4), Form("hBDXMiniSlowControls_daqT_slot%i_ch%i", slot, ch * 4), m_nbins, 0, m_nbins * m_dT);
+	}
 	for (arduinoEvents_it = arduinoEvents.begin(); arduinoEvents_it != arduinoEvents.end(); arduinoEvents_it++) {
 		index = arduinoEvents_it->first;
 		if (next(arduinoEvents_it) != arduinoEvents.end()) {
@@ -301,11 +305,6 @@ jerror_t JEventProcessor_BDXMiniSlowControls::erun(void) {
 	/*DAQ*/
 	m_nbins = (daqEvents.rbegin())->first;
 	hBDXMiniSlowControls_daqLT = new TH1D("hBDXMiniSlowControls_daqLT", "hBDXMiniSlowControls_daqLT", m_nbins, 0, m_nbins * m_dT);
-	for (int ii = 0; ii < 16; ii++) {
-		int slot = ii / 4;
-		int ch = ii % 4;
-		hBDXMiniSlowControls_daqT[ii] = new TH1D(Form("hBDXMiniSlowControls_daqT_slot%i_ch%i", slot, ch * 4), Form("hBDXMiniSlowControls_daqT_slot%i_ch%i", slot, ch * 4), m_nbins, 0, m_nbins * m_dT);
-	}
 //	B_DET_BDX_V1725_1_00:Temperature
 
 	for (daqEvents_it = daqEvents.begin(); daqEvents_it != daqEvents.end(); daqEvents_it++) {
