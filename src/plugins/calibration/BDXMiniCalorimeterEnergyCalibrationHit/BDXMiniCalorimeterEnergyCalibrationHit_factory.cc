@@ -157,14 +157,14 @@ jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::evnt(JEventLoop *loop, 
 			}
 		} else if (m_IntVetoDigiHit->m_channel.component <= 8) {
 			if (m_IntVetoDigiHit->m_channel.layer == 0) {
-				if ((m_IntVetoDigiHit->Qphe > m_thrIntVetoL) && (m_IntVetoDigiHit->Qphe > maxComponentQ0L)) {
+				if ((m_IntVetoDigiHit->Aphe > m_thrIntVetoL) && (m_IntVetoDigiHit->Aphe > maxComponentQ0L)) {
 					maxComponent0L = m_IntVetoDigiHit->m_channel.component;
-					maxComponentQ0L = m_IntVetoDigiHit->Qphe;
+					maxComponentQ0L = m_IntVetoDigiHit->Aphe;
 				}
 			} else if (m_IntVetoDigiHit->m_channel.layer == 1) {
-				if ((m_IntVetoDigiHit->Qphe > m_thrIntVetoL) && (m_IntVetoDigiHit->Qphe > maxComponentQ1L)) {
+				if ((m_IntVetoDigiHit->Aphe > m_thrIntVetoL) && (m_IntVetoDigiHit->Aphe > maxComponentQ1L)) {
 					maxComponent1L = m_IntVetoDigiHit->m_channel.component;
-					maxComponentQ1L = m_IntVetoDigiHit->Qphe;
+					maxComponentQ1L = m_IntVetoDigiHit->Aphe;
 				}
 			}
 		}

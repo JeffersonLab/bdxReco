@@ -188,25 +188,25 @@ jerror_t JEventProcessor_BDXMiniSlowControls::evnt(JEventLoop *loop, uint64_t ev
 		arduinoH1[index] = arduinoH1[index] + epicsData->getDataValue("BDXarduinoH1");
 		arduinoH2[index] = arduinoH2[index] + epicsData->getDataValue("BDXarduinoH2");
 
-		daqT[0][index] = daqT[0][index] + epicsData->getDataValue("B_DET_BDX_V1725_1_00:Temperature");
-		daqT[1][index] = daqT[1][index] + epicsData->getDataValue("B_DET_BDX_V1725_1_04:Temperature");
-		daqT[2][index] = daqT[2][index] + epicsData->getDataValue("B_DET_BDX_V1725_1_08:Temperature");
-		daqT[3][index] = daqT[3][index] + epicsData->getDataValue("B_DET_BDX_V1725_1_12:Temperature");
+		daqT[0][index] = daqT[0][index] + epicsData->getDataValue("B_DET_BDX_V1725_1_00:Temperatur");
+		daqT[1][index] = daqT[1][index] + epicsData->getDataValue("B_DET_BDX_V1725_1_04:Temperatur");
+		daqT[2][index] = daqT[2][index] + epicsData->getDataValue("B_DET_BDX_V1725_1_08:Temperatur");
+		daqT[3][index] = daqT[3][index] + epicsData->getDataValue("B_DET_BDX_V1725_1_12:Temperatur");
 
-		daqT[4][index] = daqT[4][index] + epicsData->getDataValue("B_DET_BDX_V1725_2_00:Temperature");
-		daqT[5][index] = daqT[5][index] + epicsData->getDataValue("B_DET_BDX_V1725_2_04:Temperature");
-		daqT[6][index] = daqT[6][index] + epicsData->getDataValue("B_DET_BDX_V1725_2_08:Temperature");
-		daqT[7][index] = daqT[7][index] + epicsData->getDataValue("B_DET_BDX_V1725_2_12:Temperature");
+		daqT[4][index] = daqT[4][index] + epicsData->getDataValue("B_DET_BDX_V1725_2_00:Temperatur");
+		daqT[5][index] = daqT[5][index] + epicsData->getDataValue("B_DET_BDX_V1725_2_04:Temperatur");
+		daqT[6][index] = daqT[6][index] + epicsData->getDataValue("B_DET_BDX_V1725_2_08:Temperatur");
+		daqT[7][index] = daqT[7][index] + epicsData->getDataValue("B_DET_BDX_V1725_2_12:Temperatur");
 
-		daqT[8][index] = daqT[8][index] + epicsData->getDataValue("B_DET_BDX_V1725_3_00:Temperature");
-		daqT[9][index] = daqT[9][index] + epicsData->getDataValue("B_DET_BDX_V1725_3_04:Temperature");
-		daqT[10][index] = daqT[10][index] + epicsData->getDataValue("B_DET_BDX_V1725_3_08:Temperature");
-		daqT[11][index] = daqT[11][index] + epicsData->getDataValue("B_DET_BDX_V1725_3_12:Temperature");
+		daqT[8][index] = daqT[8][index] + epicsData->getDataValue("B_DET_BDX_V1725_3_00:Temperatur");
+		daqT[9][index] = daqT[9][index] + epicsData->getDataValue("B_DET_BDX_V1725_3_04:Temperatur");
+		daqT[10][index] = daqT[10][index] + epicsData->getDataValue("B_DET_BDX_V1725_3_08:Temperatur");
+		daqT[11][index] = daqT[11][index] + epicsData->getDataValue("B_DET_BDX_V1725_3_12:Temperatur");
 
-		daqT[12][index] = daqT[12][index] + epicsData->getDataValue("B_DET_BDX_V1725_4_00:Temperature");
-		daqT[13][index] = daqT[13][index] + epicsData->getDataValue("B_DET_BDX_V1725_4_04:Temperature");
-		daqT[14][index] = daqT[14][index] + epicsData->getDataValue("B_DET_BDX_V1725_4_08:Temperature");
-		daqT[15][index] = daqT[15][index] + epicsData->getDataValue("B_DET_BDX_V1725_4_12:Temperature");
+		daqT[12][index] = daqT[12][index] + epicsData->getDataValue("B_DET_BDX_V1725_4_00:Temperatur");
+		daqT[13][index] = daqT[13][index] + epicsData->getDataValue("B_DET_BDX_V1725_4_04:Temperatur");
+		daqT[14][index] = daqT[14][index] + epicsData->getDataValue("B_DET_BDX_V1725_4_08:Temperatur");
+		daqT[15][index] = daqT[15][index] + epicsData->getDataValue("B_DET_BDX_V1725_4_12:Temperatur");
 	}
 
 	//DAQ
