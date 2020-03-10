@@ -29,7 +29,7 @@ static TH1D *hBDXMiniSlowControls_arduinoH2 = 0;
 
 static TH1D *hBDXMiniSlowControls_daqLT = 0;
 
-static TH1D *hBDXMiniSlowControls_daqT[16] = {0};
+static TH1D *hBDXMiniSlowControls_daqT[16] = { 0 };
 
 static TH1D *hBDXMiniSlowControls_beamI = 0;
 static TH1D *hBDXMiniSlowControls_beamE = 0;
@@ -187,12 +187,6 @@ jerror_t JEventProcessor_BDXMiniSlowControls::evnt(JEventLoop *loop, uint64_t ev
 		arduinoT2[index] = arduinoT2[index] + epicsData->getDataValue("BDXarduinoT2");
 		arduinoH1[index] = arduinoH1[index] + epicsData->getDataValue("BDXarduinoH1");
 		arduinoH2[index] = arduinoH2[index] + epicsData->getDataValue("BDXarduinoH2");
-	}
-
-	//DAQ
-	if (epicsData->hasData("B_DET_BDX_FPGA:livetime")) {
-		daqEvents[index] = daqEvents[index] + 1;
-		daqLT[index] = daqLT[index] + epicsData->getDataValue("B_DET_BDX_FPGA:livetime");
 
 		daqT[0][index] = daqT[0][index] + epicsData->getDataValue("B_DET_BDX_V1725_1_00:Temperature");
 		daqT[1][index] = daqT[1][index] + epicsData->getDataValue("B_DET_BDX_V1725_1_04:Temperature");
@@ -213,6 +207,12 @@ jerror_t JEventProcessor_BDXMiniSlowControls::evnt(JEventLoop *loop, uint64_t ev
 		daqT[13][index] = daqT[13][index] + epicsData->getDataValue("B_DET_BDX_V1725_4_04:Temperature");
 		daqT[14][index] = daqT[14][index] + epicsData->getDataValue("B_DET_BDX_V1725_4_08:Temperature");
 		daqT[15][index] = daqT[15][index] + epicsData->getDataValue("B_DET_BDX_V1725_4_12:Temperature");
+	}
+
+	//DAQ
+	if (epicsData->hasData("B_DET_BDX_FPGA:livetime")) {
+		daqEvents[index] = daqEvents[index] + 1;
+		daqLT[index] = daqLT[index] + epicsData->getDataValue("B_DET_BDX_FPGA:livetime");
 
 	}
 
@@ -279,12 +279,18 @@ jerror_t JEventProcessor_BDXMiniSlowControls::erun(void) {
 				hBDXMiniSlowControls_arduinoT2->SetBinContent(index2 + 1, 1. * arduinoT2[index] / arduinoEvents[index]);
 				hBDXMiniSlowControls_arduinoH1->SetBinContent(index2 + 1, 1. * arduinoH1[index] / arduinoEvents[index]);
 				hBDXMiniSlowControls_arduinoH2->SetBinContent(index2 + 1, 1. * arduinoH2[index] / arduinoEvents[index]);
+				for (int ii = 0; ii < 16; ii++) {
+					hBDXMiniSlowControls_daqT[ii]->SetBinContent(index2 + 1, 1. * daqT[ii][index] / daqEvents[index]);
+				}
 			}
 		} else {
 			hBDXMiniSlowControls_arduinoT1->SetBinContent(index + 1, 1. * arduinoT1[index] / arduinoEvents[index]);
 			hBDXMiniSlowControls_arduinoT2->SetBinContent(index + 1, 1. * arduinoT2[index] / arduinoEvents[index]);
 			hBDXMiniSlowControls_arduinoH1->SetBinContent(index + 1, 1. * arduinoH1[index] / arduinoEvents[index]);
 			hBDXMiniSlowControls_arduinoH2->SetBinContent(index + 1, 1. * arduinoH2[index] / arduinoEvents[index]);
+			for (int ii = 0; ii < 16; ii++) {
+				hBDXMiniSlowControls_daqT[ii]->SetBinContent(index + 1, 1. * daqT[ii][index] / daqEvents[index]);
+			}
 		}
 	}
 	hBDXMiniSlowControls_arduinoT1->SetBinContent(m_nbins, hBDXMiniSlowControls_arduinoT1->GetBinContent(m_nbins - 1)); //just for graphics, last bin fix
@@ -309,15 +315,11 @@ jerror_t JEventProcessor_BDXMiniSlowControls::erun(void) {
 			daqEvents_it2++;
 			for (int index2 = index; index2 < daqEvents_it2->first; index2++) {
 				hBDXMiniSlowControls_daqLT->SetBinContent(index2 + 1, 1. * daqLT[index] / daqEvents[index]);
-				for (int ii = 0; ii < 16; ii++) {
-					hBDXMiniSlowControls_daqT[ii]->SetBinContent(index2 + 1, 1. * daqT[ii][index] / daqEvents[index]);
-				}
+
 			}
 		} else {
 			hBDXMiniSlowControls_daqLT->SetBinContent(index + 1, 1. * daqLT[index] / daqEvents[index]);
-			for (int ii = 0; ii < 16; ii++) {
-				hBDXMiniSlowControls_daqT[ii]->SetBinContent(index + 1, 1. * daqT[ii][index] / daqEvents[index]);
-			}
+
 		}
 	}
 	hBDXMiniSlowControls_daqLT->SetBinContent(m_nbins, hBDXMiniSlowControls_daqLT->GetBinContent(m_nbins - 1)); //just for graphics, last bin fix
