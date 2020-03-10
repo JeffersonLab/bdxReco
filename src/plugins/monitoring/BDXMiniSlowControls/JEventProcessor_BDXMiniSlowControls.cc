@@ -280,7 +280,7 @@ jerror_t JEventProcessor_BDXMiniSlowControls::erun(void) {
 				hBDXMiniSlowControls_arduinoH1->SetBinContent(index2 + 1, 1. * arduinoH1[index] / arduinoEvents[index]);
 				hBDXMiniSlowControls_arduinoH2->SetBinContent(index2 + 1, 1. * arduinoH2[index] / arduinoEvents[index]);
 				for (int ii = 0; ii < 16; ii++) {
-					hBDXMiniSlowControls_daqT[ii]->SetBinContent(index2 + 1, 1. * daqT[ii][index] / daqEvents[index]);
+					hBDXMiniSlowControls_daqT[ii]->SetBinContent(index2 + 1, 1. * daqT[ii][index] / arduinoEvents[index]);
 				}
 			}
 		} else {
@@ -289,7 +289,7 @@ jerror_t JEventProcessor_BDXMiniSlowControls::erun(void) {
 			hBDXMiniSlowControls_arduinoH1->SetBinContent(index + 1, 1. * arduinoH1[index] / arduinoEvents[index]);
 			hBDXMiniSlowControls_arduinoH2->SetBinContent(index + 1, 1. * arduinoH2[index] / arduinoEvents[index]);
 			for (int ii = 0; ii < 16; ii++) {
-				hBDXMiniSlowControls_daqT[ii]->SetBinContent(index + 1, 1. * daqT[ii][index] / daqEvents[index]);
+				hBDXMiniSlowControls_daqT[ii]->SetBinContent(index + 1, 1. * daqT[ii][index] / arduinoEvents[index]);
 			}
 		}
 	}
