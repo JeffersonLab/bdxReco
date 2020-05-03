@@ -15,7 +15,9 @@ using namespace std;
 
 
 TEvent::TEvent(){
+
 	m_eventHeader=new TEventHeader();
+	m_objects.SetOwner();
 }
 
 TEvent::~TEvent(){
@@ -26,7 +28,7 @@ TEvent::~TEvent(){
 
 TClonesArray* TEvent::getCollection (int id) const{
 	if (id<this->getNcollections()){
-		return m_collections.at(id);
+		return m_collections[id];
 	}
 	else{
 		Error("TEvent","TEvent::getCollection bad id!");
@@ -69,6 +71,7 @@ void TEvent::deleteCollection(TClass *theClass,string name){
 	vector < TClonesArray* >::iterator it;
 	for (it=m_collections.begin();it!=m_collections.end();it++){
 		if ((strcmp((*it)->GetName(),name.c_str())==0)&&((*it)->GetClass()->InheritsFrom(theClass))){
+			(*it)->Delete();
 			m_collections.erase(it);
 			return;
 		}
@@ -110,15 +113,19 @@ void TEvent::printCollections()const{
 
 
 
-void  	TEvent::Clear(Option_t* opt){
-	Info("TEvent","TEvent::Clear called with opt %s",opt);
+void TEvent::Clear(Option_t* opt){
 	vector < TClonesArray* >::iterator it;
 	for (it=m_collections.begin();it!=m_collections.end();it++){
 		if (*it){
+//			(*it)->Delete();
+//			cout<<(*it)->GetName()<<endl;
 			(*it)->Clear(opt);
+			delete (*it);
 		}
 	}
-	m_objects.Clear();
+	m_collections.clear();
+	m_objects.Delete();
+
 }
 
 
