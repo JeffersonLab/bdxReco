@@ -12,6 +12,7 @@
 #include <JANA/JFactoryGenerator.h>
 
 #include "IntVetoSiPMHit_factory.h"
+#include "IntVetoSiPMHit_factory_BDXmini.h"
 #include "IntVetoDigiHit_factory.h"
 #include "IntVetoDigiHit_factory_MC.h"
 #include "IntVetoHit_factory.h"
@@ -32,6 +33,7 @@ class JFactoryGenerator_IntVeto: public jana::JFactoryGenerator{
 		
 		jerror_t GenerateFactories(jana::JEventLoop *loop){
 			loop->AddFactory(new IntVetoSiPMHit_factory());
+			loop->AddFactory(new IntVetoSiPMHit_factory_BDXmini());
 			loop->AddFactory(new IntVetofa250Converter_factory());
 			loop->AddFactory(new IntVetoDigiHit_factory());
 			loop->AddFactory(new IntVetoDigiHit_factory_MC());

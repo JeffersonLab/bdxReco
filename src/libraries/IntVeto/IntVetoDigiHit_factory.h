@@ -14,7 +14,7 @@
 
 class IntVetoDigiHit_factory:public jana::JFactory<IntVetoDigiHit>{
 	public:
-		IntVetoDigiHit_factory(){};
+		IntVetoDigiHit_factory();
 		~IntVetoDigiHit_factory(){};
 
 
@@ -27,7 +27,7 @@ class IntVetoDigiHit_factory:public jana::JFactory<IntVetoDigiHit>{
 
 		const TranslationTable *m_tt;
 
-
+		int USE_TOT_BDXMINI;
 };
 
 #endif // _IntVetoDigiHit_factory_

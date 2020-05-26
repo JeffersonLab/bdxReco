@@ -28,6 +28,9 @@ INTVETO:THR	 0.5       #min amplitude of a pulse -in phe units
 INTVETO:NPED 20        #num of ns samples in pedestal determination event by event
 INTVETO:NSB	 20        #num of ns before the maximum
 INTVETO:NSA	 30        #num of ns after  the maximum
+INTVETO:TOT_THR 400    #mV for the high amplitude TOT
+
+INTVETO:USE_TOT_BDXMINI 1      #In the DigiHit_factory, use the SipmHit_factory with the ToT
 
 #Calorimeter parameters
 CALORIMETER:HIT_THR_SINGLE  5 #Threshold in phe (charge)

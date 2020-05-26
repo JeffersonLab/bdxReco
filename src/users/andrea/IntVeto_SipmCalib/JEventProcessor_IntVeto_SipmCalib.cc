@@ -83,7 +83,9 @@ jerror_t JEventProcessor_IntVeto_SipmCalib::init(void) {
 	t->Branch("Qphe", &Qphe);
 	t->Branch("Qraw", &Qraw);
 	t->Branch("T", &T);
+	t->Branch("Ttot", &Ttot);
 	t->Branch("A", &A);
+	t->Branch("Aphe", &Aphe);
 	t->Branch("eventN", &eventNumber);
 
 	t->Branch("tWord", &tWord);
@@ -174,7 +176,9 @@ jerror_t JEventProcessor_IntVeto_SipmCalib::evnt(JEventLoop *loop, uint64_t even
 			m_readout = (*data_it)->m_channel.int_veto->readout;
 			m_type = (*data_it)->m_type;
 			T = (*data_it)->T;
+			Ttot = (*data_it)->Ttot;
 			A = (*data_it)->Araw;
+			Aphe = (*data_it)->Aphe;
 			Qphe = (*data_it)->Qphe;
 			Qraw = (*data_it)->Qraw;
 			eventNumber = eventnumber;

@@ -39,9 +39,11 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 
 	std::vector<std::pair<int, int> > m_crossingTimes;
 	std::vector<int> m_crossingTimesDelta;
-
 	std::vector<int> m_singleCrossingIndexes;
-	//std::vector<int> m_signalCrossingIndexs;
+
+	double m_TOT_PRE=0;
+	double m_TOT_POST=0;
+	double m_TOT=-1.;
 
 	double m_NPEDs, m_NSBs, m_NSAs;
 
@@ -104,7 +106,6 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 
 	thr = thr * m_thr;   //put a very low thr at this level
 
-
 	//2: find thr crossings
 	m_thisCrossingTime.first = -1;
 	m_thisCrossingTime.second = -1;
@@ -123,7 +124,21 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 
 		}
 
+		//A.C. 25/5/2020 adding TOT test
+		if ((m_waveform[ii] >= m_TOTTHR && m_waveform[ii - 1] < m_TOTTHR)) {
+			m_TOT_PRE = (ii - 1) + (m_TOTTHR - m_waveform[ii]) / (m_waveform[ii] - m_waveform[ii - 1]);
+			m_TOT_PRE *= input->m_dT;
+		}
+		if ((m_waveform[ii] < m_TOTTHR && m_waveform[ii - 1] >= m_TOTTHR)) {
+			m_TOT_POST = (ii - 1) + (m_TOTTHR - m_waveform[ii]) / (m_waveform[ii] - m_waveform[ii - 1]);
+			m_TOT_POST *= input->m_dT;
+		}
 	}
+
+	if (m_TOT_POST > m_TOT_PRE){
+		m_TOT = m_TOT_POST - m_TOT_PRE;
+	}
+
 	//It may happen that the last sample is still over thr!
 	if (m_waveform[size - 1] > thr) {
 		m_thisCrossingTime.second = size;
@@ -148,7 +163,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 	output->nSingles = m_singleCrossingIndexes.size();
 	if ((output->nSingles) == 0) {
 		output->m_type = IntVetoSiPMHit::noise;
-		output->Qraw = this->sumSamples((m_NSAs + m_NSBs > m_waveform.size()) ? m_waveform.size() : m_NSAs+m_NSBs, &(m_waveform[0]));  //for compatibility with case 1
+		output->Qraw = this->sumSamples((m_NSAs + m_NSBs > m_waveform.size()) ? m_waveform.size() : m_NSAs + m_NSBs, &(m_waveform[0]));  //for compatibility with case 1
 		output->Araw = this->getMaximum(m_waveform.size(), &(m_waveform[0]), output->T);
 		output->T = -1;
 		return NOERROR;
@@ -160,14 +175,14 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 		/*Loop over the thr crossings and select the highest pulse*/
 		for (int iphe = 0; iphe < output->nSingles; iphe++) {
 			idx = m_singleCrossingIndexes.at(iphe);
-			xmin = m_crossingTimes.at(idx).first;
-			xmax = m_crossingTimes.at(idx).second;
+			xmin = m_crossingTimes[idx].first;
+			xmax = m_crossingTimes[idx].second;
 			ixmin = (int) xmin;
 			ixmax = (int) xmax;
 			if (ixmin < 0) ixmin = 0;
 			if (ixmax >= m_waveform.size()) ixmax = m_waveform.size() - 1;
 
-			max = this->getMaximum(ixmin,ixmax, &(m_waveform[0]), Tmax);
+			max = this->getMaximum(ixmin, ixmax, &(m_waveform[0]), Tmax);
 			if ((output->Araw) < max) {
 				output->Araw = max;
 				imax = idx;
@@ -185,7 +200,6 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 
 		max = this->getMaximum(ixmin, ixmax, &(m_waveform[0]), Tmax);
 
-
 		xmin = Tmax - m_NSAs;
 		if (xmin < 0) xmin = 0;
 		xmax = Tmax + m_NSBs;
@@ -197,10 +211,10 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 		output->T = Tmax;
 		output->T *= input->m_dT; //in NS!!!
 
+		output->Ttot = m_TOT;
 
 		return NOERROR;
 	}
-
 
 	return NOERROR;
 }

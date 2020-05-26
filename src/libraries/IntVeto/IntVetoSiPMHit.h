@@ -38,6 +38,7 @@ public:
 		AddString(items,"Qraw","%4f",Qraw);
 		AddString(items,"Qphe","%4f",Qphe);
 		AddString(items,"T","%4f",T);
+		AddString(items,"TOT","%4f",Ttot);
 		AddString(items,"Araw","%4f",Araw);
 		AddString(items,"Aphe","%4f",Aphe);
 		AddString(items,"pedMean","%4f",pedMean);
@@ -61,6 +62,7 @@ public:
 	double T;
 	double Araw;
 	double Aphe;
+	double Ttot;
 	double average;
 	double pedMean,pedRMS;
 	int nSingles;

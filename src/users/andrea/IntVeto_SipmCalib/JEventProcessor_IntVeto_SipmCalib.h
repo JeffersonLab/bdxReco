@@ -33,7 +33,7 @@ class JEventProcessor_IntVeto_SipmCalib:public jana::JEventProcessor{
 		int m_isFirstCallToBrun;
 
 		int m_sector,m_layer,m_component,m_readout,m_type;
-		double Qphe,Qraw,T,A;
+		double Qphe,Qraw,T,Ttot,A,Aphe;
 
 
 		JROOTOutput *m_ROOTOutput;
