@@ -29,6 +29,8 @@ double Amax_L0[10] = { 1300., 1300., 1300., 1250., 1200., 1250., 1300., 1300., 1
 double Amin_L1[10] = { 450, 450, 500, 450, 450, 450, 450, 450, 450, 450 };
 double Amax_L1[10] = { 1200., 1200., 1200., 1200., 1200., 1200., 1200., 1200., 1200., 1200. };
 
+double AminTOT = 1100.;
+
 IntVetoSiPMHit_factory_BDXmini::IntVetoSiPMHit_factory_BDXmini() :
 		m_tt(0) {
 	m_sipm_gain = 0;
@@ -146,10 +148,10 @@ jerror_t IntVetoSiPMHit_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnu
 
 			/*A.C. using the TOT for large signals*/
 			auto icomponent = m_IntVetoSiPMHit->m_channel.int_veto->component - 1;
-			if (m_IntVetoSiPMHit->Ttot > 0) {
-				if ((m_IntVetoSiPMHit->m_channel.int_veto->layer == 0) && (m_IntVetoSiPMHit->Araw > Amin_L0[icomponent])) {
+			if ((m_IntVetoSiPMHit->Ttot > 0) && (m_IntVetoSiPMHit->Araw > AminTOT)) {
+				if ((m_IntVetoSiPMHit->m_channel.int_veto->layer == 0) && (m_IntVetoSiPMHit->Ttot < BOV[icomponent])) {
 					m_IntVetoSiPMHit->Araw = AOV[icomponent] / (BOV[icomponent] - m_IntVetoSiPMHit->Ttot);
-				} else if ((m_IntVetoSiPMHit->m_channel.int_veto->layer == 1) && (m_IntVetoSiPMHit->Araw > Amin_L1[icomponent])) {
+				} else if ((m_IntVetoSiPMHit->m_channel.int_veto->layer == 1) && (m_IntVetoSiPMHit->Ttot < BIV[icomponent])) {
 					m_IntVetoSiPMHit->Araw = AIV[icomponent] / (BIV[icomponent] - m_IntVetoSiPMHit->Ttot);
 				}
 			}
