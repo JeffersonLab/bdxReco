@@ -1,0 +1,78 @@
+#Configuration file for BDX data reconstruction - pass1
+
+#System parameters
+MC		0
+JANA_CALIB_CONTEXT "variation=BDXminiPass1"
+THREAD_TIMEOUT 300
+THREAD_TIMEOUT_FIRST_EVENT 300
+
+DAQ:VME_MOTHER_TAG 80	    #0x50
+DAQ:EPICS_MOTHER_TAG 129    #0x81
+DAQ:CHILD_EPICS_TAG 57620   #0xe114
+DAQ:CHILD_MODE1_TAG 57601   #0xe101
+DAQ:CHILD_TRIGGER_TAG 57638 #0xe126, this is the V1495 trigger bank
+DAQ:EVENTHEADER_TAG 57615   #0xe10f
+DAQ:PRESTART_TAG 17 	    #0x11
+DAQ:VERBOSE 2
+
+#Calo wave integration parameters
+CALORIMETER:NPED	       120	#num of samples to include in pedestal     (in ns: if you enter 20, it is 20ns)
+CALORIMETER:NSB		       20	#num of samples before the maximum         (in ns) 
+CALORIMETER:NSA		       28 	#num of samples after  the maximum         (in ns) (for SiPM studies only - ignore)
+CALORIMETER:NSAMPLES	   160  #num of samples in the integration window  (in ns) (starting NSB before the threshold)
+
+
+#IntVeto wave integration parameters
+INTVETO:MIN_TOT  12    #min tot in ns to consider a pulse
+INTVETO:THR	 0.5       #min amplitude of a pulse -in phe units
+INTVETO:NPED 20        #num of ns samples in pedestal determination event by event
+INTVETO:NSB	 20        #num of ns before the maximum
+INTVETO:NSA	 30        #num of ns after  the maximum
+INTVETO:TOT_THR 400    #mV for the high amplitude TOT
+
+INTVETO:USE_TOT_BDXMINI 1      #In the DigiHit_factory, use the SipmHit_factory with the ToT
+
+#Calorimeter parameters
+CALORIMETER:HIT_THR_SINGLE  5 #Threshold in phe (charge)
+
+#Calorimeter clusters
+CALORIMETER:CLUSTER_HIT_THR  10
+CALORIMETER:CLUSTER_SEED_THR 20
+
+
+INTVETO:HIT_THR_SINGLE   0.5   #thr in phe charge for a detector with single readout
+INTVETO:HIT_THR_MULTI   -30   #thr in phe charge for a detector with multiple readout -> Irrelevant here
+INTVETO:HIT_DT_MULTI    2000  #time-window coincidence for hits in a counter with multiple readout ->Irrelevant here
+INTVETO:HIT_N_MULTI     2     #multiplicity for a detector with multi readout -> Irrelevant here
+
+INTVETO:VERBOSE  3
+
+##################################
+##########Event Builder###########
+##################################
+#We save ALL waveforms in an event if
+#-> There is at least one electromagnetic cluster with energy > thrEneTot (thrEneTot=100 MeV default, programmable)
+# AND
+#-> All the veto counter sipm hits see LESS THAN thrNpheVeto phe (thrNpheVeto=10, programmable)
+# The idea is to not leave any important event - to be further scrutinized - behind
+
+TEVENT_FACTORY_BDXMINI:thrEneTot   100
+TEVENT_FACTORY_BDXMINI:thrNpheVeto  10
+
+#Save the trigger words in the event header?
+TEVENT_FACTORY_BDXMINI:ADD_TRIGGER_WORDS 1 
+
+#EPICS parameters
+#EPICS:DELTA_TIME 29 #the time to add to EPICS events (s) to match with DAQ
+
+
+################################
+############PLUGINS#############
+################################
+
+###### BDXMiniStability #######
+BDXMiniStability:dT           60         #Time-width (in s) of a bin for the rate measurement
+BDXMiniStability:thrEneTot   100         #Threshold for the "high-energy" EM clusters - total energy
+BDXMiniStability:thrEneSeed   20         #Threshold for the "high-energy" EM clusters - seed energy
+ 
+
