@@ -182,6 +182,7 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		((IntVetoHit*) m_IntVetoHits->ConstructedAt(ii))->operator=(*(ivhits[ii]));
 		m_event->AddAssociatedObject(ivhits[ii]);
 		//Check for the presence of activity in the veto
+		if (ivhits[ii]->m_channel.sector==0 && ivhits[ii]->m_channel.component==3) continue; //ignore OV3, broken
 		if ((ivhits[ii])->Q > m_thrNpheVeto) saveWaveforms_flagVeto = false; //flag if all counters are below threshold. If there is even one with Q > threshold, dont'save
 	}
 	m_event->addCollection(m_IntVetoHits);
