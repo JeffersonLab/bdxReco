@@ -117,6 +117,8 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	bool saveWaveforms_flagCalo = false;
 	bool saveWaveforms_flagVeto = true;
 
+	double saveWaveforms_Etot = 0;
+
 #ifdef MC_SUPPORT_ENABLE
 	vector<const CalorimeterMCRealHit*> chits_MCReal;
 	vector<const GenParticle*> genParticles;
@@ -164,17 +166,13 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	loop->Get(chits);
 	m_CaloHits->Clear("C");
 	for (int ii = 0; ii < chits.size(); ii++) {
+		saveWaveforms_Etot+=chits[ii]->E;
 		((CalorimeterHit*) m_CaloHits->ConstructedAt(ii))->operator=(*(chits[ii]));
 		m_event->AddAssociatedObject(chits[ii]);
 	}
 	m_event->addCollection(m_CaloHits);
+	if (saveWaveforms_Etot> m_thrEneTot) saveWaveforms_flagCalo = true; //flag if Etot > threshold
 
-	//Check for high-energy clusters
-	//A.C. At the moment, we don't save these in the event collections
-	loop->Get(cclusters);
-	for (int ii = 0; ii < cclusters.size(); ii++) {
-		if ((cclusters[ii])->E > m_thrEneTot) saveWaveforms_flagCalo = true; //flag is there is at least one cluster at high Energy
-	}
 
 	loop->Get(ivhits);
 	m_IntVetoHits->Clear("C");
