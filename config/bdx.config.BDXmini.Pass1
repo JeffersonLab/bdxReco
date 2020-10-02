@@ -56,7 +56,7 @@ INTVETO:VERBOSE  3
 #-> All the veto counter sipm hits see LESS THAN thrNpheVeto phe (thrNpheVeto=10, programmable)
 # The idea is to not leave any important event - to be further scrutinized - behind
 
-TEVENT_FACTORY_BDXMINI:thrEneTot   100
+TEVENT_FACTORY_BDXMINI:thrEneTot    50
 TEVENT_FACTORY_BDXMINI:thrNpheVeto  10
 
 #Save the trigger words in the event header?
