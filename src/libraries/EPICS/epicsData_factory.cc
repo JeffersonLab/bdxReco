@@ -79,7 +79,7 @@ jerror_t epicsData_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		cout<<"CAZZO: "<<T0<<" "<<mT<<" "<<tCorr<<endl;
 
 		m_data.runNumber = tData->runN;
-		m_data.time = tData->time + tCorr;
+		m_data.time = tData->time + (int)round(tCorr);
 		for (int ii = 0; ii < m_rawdata.size(); ii++) {
 			m_data.decode(m_rawdata[ii]->rawData, tCorr);
 		}
