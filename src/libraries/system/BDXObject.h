@@ -29,7 +29,7 @@ public:
 protected:
 	mutable TCanvas *m_canvas; //!
 
-ClassDef(BDXObject,1);
+	ClassDef(BDXObject,1);
 
 };
 

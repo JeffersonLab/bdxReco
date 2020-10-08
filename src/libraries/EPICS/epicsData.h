@@ -35,7 +35,7 @@ public:
 	int getDataTime(string key) const;
 
 
-	void decode(string rawData,int deltaTime);
+	void decode(string rawData,long int deltaTime);
 
 
 	epicsData() {};

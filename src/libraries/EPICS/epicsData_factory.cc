@@ -12,20 +12,25 @@ using namespace std;
 #include "epicsData_factory.h"
 #include <DAQ/epicsRawData.h>
 #include <DAQ/eventData.h>
+#include <system/RunCalibrationHandler.h>
 using namespace jana;
 
 /*This is the global memory to keep track of epics data*/
 epicsData m_data;
 
-epicsData_factory::epicsData_factory(){
+epicsData_factory::epicsData_factory() :
+		m_dTs(0) {
 
-	m_deltaTime=0;
-	gPARMS->SetDefaultParameter("EPICS:DELTA_TIME",m_deltaTime,"Time (in s) to add to all EPICS times - can be >0, =0(default), <0");
+	m_deltaTime = 0;
+	gPARMS->SetDefaultParameter("EPICS:DELTA_TIME", m_deltaTime, "Time (in s) to add to all EPICS times - can be >0, =0(default), <0");
 }
 //------------------
 // init
 //------------------
 jerror_t epicsData_factory::init(void) {
+	m_dTs = new RunCalibrationHandler("/DAQ/epics_dT");
+	this->mapCalibrationHandler(m_dTs);
+
 	return NOERROR;
 }
 
@@ -33,6 +38,7 @@ jerror_t epicsData_factory::init(void) {
 // brun
 //------------------
 jerror_t epicsData_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber) {
+	this->updateCalibrationHandler(m_dTs, eventLoop);
 	return NOERROR;
 }
 
@@ -62,10 +68,20 @@ jerror_t epicsData_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	 * last epics event, by reading from the global memory. This is thread-save, we just read from it
 	 */
 	if (m_rawdata.size() > 0) {
+
+		/*A.C. the time correction can be from the m_deltaTime, and/or from the dB, where there is an ADDICTIVE factor
+		 * in the form corr = A + eventNumber * B
+		 */
+		double T0 = m_dTs->getCalib()[0];
+		double mT = m_dTs->getCalib()[1];
+		double tCorr = m_deltaTime + T0 + m_data.eventNumber * mT;
+
+		cout<<"CAZZO: "<<T0<<" "<<mT<<" "<<tCorr<<endl;
+
 		m_data.runNumber = tData->runN;
-		m_data.time = tData->time+m_deltaTime;
+		m_data.time = tData->time + tCorr;
 		for (int ii = 0; ii < m_rawdata.size(); ii++) {
-			m_data.decode(m_rawdata[ii]->rawData,m_deltaTime);
+			m_data.decode(m_rawdata[ii]->rawData, tCorr);
 		}
 	}
 

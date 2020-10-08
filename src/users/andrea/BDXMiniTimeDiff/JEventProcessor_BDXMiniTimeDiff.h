@@ -32,7 +32,9 @@ class JEventProcessor_BDXMiniTimeDiff:public jana::JEventProcessor{
 
 		TH1D *hTimeDiff;
 		TH2D *hTimeDiffvsEventN;
-		double timeThis,timePrev;
+		long long int timeThis,timePrev;
+
+		int eventTypeThis,eventTypePrev;
 };
 
 #endif // _JEventProcessor_BDXMiniTimeDiff_

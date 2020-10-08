@@ -12,6 +12,7 @@
 #include <system/BDXFactory.h>
 #include "epicsData.h"
 
+class RunCalibrationHandler;
 class epicsData_factory:public BDXFactory<epicsData>{
 	public:
 		epicsData_factory();
@@ -25,7 +26,9 @@ class epicsData_factory:public BDXFactory<epicsData>{
 		jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
-		int m_deltaTime; 						//this is the time (in s) added to the each EPICS entry - to account for possible mis-matches.
+		long int m_deltaTime; 						//this is the time (in s) added to the each EPICS entry - to account for possible mis-matches.
+
+		RunCalibrationHandler *m_dTs;
 };
 
 #endif // _epicsData_factory_

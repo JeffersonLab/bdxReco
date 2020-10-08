@@ -551,6 +551,10 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) 
 							this_eventData->eventN = (*pData)[2];
 							this_eventData->runN = (*pData)[1];
 							this_eventData->time = (*pData)[3];
+
+
+
+
 						}
 					}
 				}

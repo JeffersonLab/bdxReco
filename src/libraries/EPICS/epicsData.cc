@@ -4,7 +4,7 @@
 #include <sstream>      // std::istringstream
 
 /*raw Data is in the format: value description \n */
-void epicsData::decode(string rawData,int deltaTime) {
+void epicsData::decode(string rawData,long int deltaTime) {
 	std::istringstream stream;
 	stream.str(rawData);
 	double val;

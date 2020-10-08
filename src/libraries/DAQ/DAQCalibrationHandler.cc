@@ -13,7 +13,7 @@ jerror_t DAQCalibrationHandler::fillCalib(const std::vector<std::vector<double> 
 	for (int irow = 0; irow < calib_data.size(); irow++) {
 		data.clear();
 		if (irow > 0) prevNdata = nData;
-		nData = calib_data.at(irow).size() - 3;   //crate, slot channel
+		nData = calib_data[irow].size() - 3;   //crate, slot channel
 		if (nData <= 0) {
 			jerr << "Error in DAQCalibrationHandler::fillCalib. No data?" << endl;
 			m_calib.clear();
@@ -25,13 +25,13 @@ jerror_t DAQCalibrationHandler::fillCalib(const std::vector<std::vector<double> 
 			return VALUE_OUT_OF_RANGE;
 		}
 		/*Fill the indexes*/
-		index.rocid = calib_data.at(irow).at(0);
-		index.slot = calib_data.at(irow).at(1);
-		index.channel = calib_data.at(irow).at(2);
+		index.rocid = calib_data[irow][0];
+		index.slot = calib_data[irow][1];
+		index.channel = calib_data[irow][2];
 
 		/*Fill the data*/
 		for (int idata = 0; idata < nData; idata++) {
-			data.push_back(calib_data.at(irow).at(idata + 3));
+			data.push_back(calib_data[irow][idata + 3]);
 		}
 		m_insert_check = m_calib.insert(std::make_pair(index, data));
 		if (m_insert_check.second == false) {

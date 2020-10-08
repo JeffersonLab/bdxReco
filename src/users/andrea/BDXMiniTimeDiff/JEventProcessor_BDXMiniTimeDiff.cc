@@ -143,11 +143,24 @@ jerror_t JEventProcessor_BDXMiniTimeDiff::evnt(JEventLoop *loop, uint64_t eventn
 		}
 	}
 	japp->RootWriteLock();
+
+
+
+
 	timePrev=timeThis;
 	timeThis=tData->time;
-	hTimeDiff->Fill(timeThis-timePrev);
-	hTimeDiffvsEventN->Fill(tData->eventN,timeThis-timePrev);
+
+	eventTypePrev = eventTypeThis;
+	eventTypeThis=tData->eventType;
+
+	if (eventTypePrev != eventTypeThis){
+
+
+		hTimeDiff->Fill(timeThis-timePrev);
+		hTimeDiffvsEventN->Fill(tData->eventN,timeThis-timePrev);
+	}
 	japp->RootUnLock();
+
 	return NOERROR;
 }
 
