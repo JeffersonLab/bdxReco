@@ -18,15 +18,7 @@ jerror_t RunCalibrationHandler::fillCalib(const std::vector<std::vector<double> 
 	m_rawCalibData.clear();
 	m_rawCalibData = calib_data;
 
-	cout<<"CAZZO???"<<endl;
-	for (auto a : m_rawCalibData){
-		cout<<"CAZZO DURO ";
-		for (auto b : a){
-			cout<<b<<" ";
-		}
-		cout<<" DURO CAZZO"<<endl;
-	}
-	cin.get();
+
 	m_calib = m_rawCalibData[0];
 
 	return NOERROR;

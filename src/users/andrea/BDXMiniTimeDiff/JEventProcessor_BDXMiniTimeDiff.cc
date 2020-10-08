@@ -13,6 +13,8 @@
 #include "DAQ/eventData.h"
 
 #include <system/JROOTOutput.h>
+#include "EPICS/epicsData.h"
+
 using namespace jana;
 
 #include "TH1D.h"
@@ -32,7 +34,7 @@ void InitPlugin(JApplication *app) {
 // JEventProcessor_BDXMiniTimeDiff (Constructor)
 //------------------
 JEventProcessor_BDXMiniTimeDiff::JEventProcessor_BDXMiniTimeDiff() :
-		m_ROOTOutput(0), hTimeDiff(0),hTimeDiffvsEventN(0) {
+		m_ROOTOutput(0), hTimeDiff(0), hTimeDiffvsEventN(0) {
 	m_isFirstCallToBrun = 1;
 	m_isMC = 0;
 }
@@ -60,10 +62,10 @@ jerror_t JEventProcessor_BDXMiniTimeDiff::init(void) {
 	gPARMS->GetParameter("MC", m_isMC);
 	japp->RootWriteLock();
 	hTimeDiff = new TH1D("h", "h", 8000, -3999.5, 4000.5);
-	hTimeDiffvsEventN= new TH2D("h2", "h2",4000,0,2E6,8000, -3999.5, 4000.5);
+	hTimeDiffvsEventN = new TH2D("h2", "h2", 4000, 0, 2E6, 8000, -3999.5, 4000.5);
 	japp->RootUnLock();
-	timeThis=0;
-	timePrev=0;
+	timeThis = 0;
+	timePrev = 0;
 
 	return NOERROR;
 }
@@ -132,8 +134,7 @@ jerror_t JEventProcessor_BDXMiniTimeDiff::evnt(JEventLoop *loop, uint64_t eventn
 	//  ... fill historgrams or trees ...
 	// japp->RootUnLock();
 	const eventData* tData;
-
-
+	const epicsData* eData;
 	if (!m_isMC) {
 		try {
 			loop->GetSingle(tData);
@@ -141,23 +142,30 @@ jerror_t JEventProcessor_BDXMiniTimeDiff::evnt(JEventLoop *loop, uint64_t eventn
 			//	jout << "JEventProcessor_IntVetoSipm::evnt::evnt no eventData bank this event" << std::endl;
 			return OBJECT_NOT_AVAILABLE;
 		}
+
+		try {
+			loop->GetSingle(eData);
+		} catch (unsigned long e) {
+			//	jout << "JEventProcessor_IntVetoSipm::evnt::evnt no eventData bank this event" << std::endl;
+			return OBJECT_NOT_AVAILABLE;
+		}
 	}
 	japp->RootWriteLock();
 
+	timePrev = timeThis;
+	timeThis = tData->time;
 
-
-
-	timePrev=timeThis;
-	timeThis=tData->time;
 
 	eventTypePrev = eventTypeThis;
-	eventTypeThis=tData->eventType;
+	eventTypeThis = tData->eventType;
 
-	if (eventTypePrev != eventTypeThis){
+	if (eventTypeThis==eventSource::EPICS){
+		timeThis = eData->time;
+	}
 
-
-		hTimeDiff->Fill(timeThis-timePrev);
-		hTimeDiffvsEventN->Fill(tData->eventN,timeThis-timePrev);
+	if (eventTypePrev != eventTypeThis) {
+		hTimeDiff->Fill(timeThis - timePrev);
+		hTimeDiffvsEventN->Fill(tData->eventN, timeThis - timePrev);
 	}
 	japp->RootUnLock();
 

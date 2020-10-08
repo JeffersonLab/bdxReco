@@ -76,7 +76,7 @@ jerror_t epicsData_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		double mT = m_dTs->getCalib()[1];
 		double tCorr = m_deltaTime + T0 + m_data.eventNumber * mT;
 
-		cout<<"CAZZO: "<<T0<<" "<<mT<<" "<<tCorr<<endl;
+
 
 		m_data.runNumber = tData->runN;
 		m_data.time = tData->time + (int)round(tCorr);

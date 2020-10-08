@@ -13,6 +13,7 @@
 class JROOTOutput;
 class TH1D;
 class TH2D;
+
 class JEventProcessor_BDXMiniTimeDiff:public jana::JEventProcessor{
 	public:
 		JEventProcessor_BDXMiniTimeDiff();
@@ -35,6 +36,7 @@ class JEventProcessor_BDXMiniTimeDiff:public jana::JEventProcessor{
 		long long int timeThis,timePrev;
 
 		int eventTypeThis,eventTypePrev;
+
 };
 
 #endif // _JEventProcessor_BDXMiniTimeDiff_
