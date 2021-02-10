@@ -18,6 +18,7 @@
 #include "eventData.h"
 #include "epicsRawData.h"
 #include "fa250WaveboardV1Hit.h"
+#include "fa250Mode1CalibPedSubCrossCorrelation_factory.h"
 
 class JFactoryGenerator_DAQ: public jana::JFactoryGenerator {
 public:
@@ -40,6 +41,7 @@ public:
 		loop->AddFactory(new JFactory<epicsRawData>());
 		loop->AddFactory(new fa250Mode1CalibPedSubHit_factory());
 		loop->AddFactory(new fa250Mode1CalibPedSubHitFFT_factory());
+		loop->AddFactory(new fa250Mode1CalibPedSubCrossCorrelation_factory());
 		return NOERROR;
 	}
 
