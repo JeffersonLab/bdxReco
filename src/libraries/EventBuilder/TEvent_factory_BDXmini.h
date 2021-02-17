@@ -43,6 +43,15 @@ private:
 	int m_ADD_TRIGGER_WORDS;
 	int m_thrNpheVeto;
 	double m_thrEneTot;
+
+	double m_thrCrosscorrSinTotMin,	m_thrCrosscorrSinTotMax;
+	double m_thrCrosscorrSignTotMin, m_thrCrosscorrSignTotMax;
+	double m_thrCrosscorrSinCaloMin, m_thrCrosscorrSinCaloMax;
+	double m_thrCrosscorrSignCaloMin ,m_thrCrosscorrSignCaloMax;
+	double m_thrCrosscorrSin5mVMin,m_thrCrosscorrSin5mVMax;
+	double m_thrCrosscorrSign5mVMin,m_thrCrosscorrSign5mVMax;
+	double m_thrCrosscorrSinCalo5mVMin, m_thrCrosscorrSinCalo5mVMax;
+	double m_thrCrosscorrSignCalo5mVMin, m_thrCrosscorrSignCalo5mVMax;
 };
 
 #endif // _TEvent_factory_BDXmini_

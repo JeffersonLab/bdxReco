@@ -22,7 +22,6 @@ using namespace std;
 #include "fa250Mode1CalibPedSubHit.h"
 using namespace jana;
 
-//???
 double signal(double *x, double *par) {
 	//Fit parameters:
 	//par[0]=starting time of signal
