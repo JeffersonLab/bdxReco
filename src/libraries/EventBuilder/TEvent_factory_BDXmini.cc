@@ -59,27 +59,81 @@ TEvent_factory_BDXmini::TEvent_factory_BDXmini() {
 
 	m_thrCrosscorrSinTotMin = 4500; //M.S.
 	m_thrCrosscorrSinTotMax = 7500;
+	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:thrCrosscorrSinTotMin",
+			m_thrCrosscorrSinTotMin,
+			"Minimum crosscorrelation for crosscorrelation with sine over all channels");
+	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:thrCrosscorrSinTotMax",
+			m_thrCrosscorrSinTotMax,
+			"Maximum crosscorrelation for crosscorrelation with sine over all channels");
 
 	m_thrCrosscorrSignTotMin = 16600;
 	m_thrCrosscorrSignTotMax = 18600;
+	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:thrCrosscorrSignTotMin",
+			m_thrCrosscorrSignTotMin,
+			"Minimun crosscorrelation for crosscorrelation with signal over all channels");
+	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:thrCrosscorrSignTotMax",
+			m_thrCrosscorrSignTotMax,
+			"Maximum crosscorrelation for crosscorrelation with signal over all channels");
 
 	m_thrCrosscorrSinCaloMin = 3500;
 	m_thrCrosscorrSinCaloMax = 5500;
+	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:thrCrosscorrSinCaloMin",
+			m_thrCrosscorrSinCaloMin,
+			"Minimum crosscorrelation for crosscorrelation with sine over the calorimeter's channels");
+	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:thrCrosscorrSinCaloMax",
+			m_thrCrosscorrSinCaloMax,
+			"Maximum crosscorrelation for crosscorrelation with sine over the calorimeter's channels");
 
 	m_thrCrosscorrSignCaloMin = 11600;
 	m_thrCrosscorrSignCaloMax = 12600;
+	gPARMS->SetDefaultParameter(
+			"TEVENT_FACTORY_BDXMINI:thrCrosscorrSignCaloMin",
+			m_thrCrosscorrSignCaloMin,
+			"Minimun crosscorrelation for crosscorrelation with signal over the calorimeter's channels");
+	gPARMS->SetDefaultParameter(
+			"TEVENT_FACTORY_BDXMINI:thrCrosscorrSignCaloMax",
+			m_thrCrosscorrSignCaloMax,
+			"Maximum crosscorrelation for crosscorrelation with signal over the calorimeter's channels");
 
 	m_thrCrosscorrSin5mVMin = 2000;
 	m_thrCrosscorrSin5mVMax = 8000;
+	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:thrCrosscorrSin5mVMin",
+			m_thrCrosscorrSin5mVMin,
+			"Minimum crosscorrelation for crosscorrelation with sine over all channels with signal over 5 mV threshrold");
+	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:thrCrosscorrSin5mVMax",
+			m_thrCrosscorrSin5mVMax,
+			"Maximum crosscorrelation for crosscorrelation with sine over all channels with signal over 5 mV threshold");
 
 	m_thrCrosscorrSign5mVMin = 4000;
 	m_thrCrosscorrSign5mVMax = 12000;
+	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:thrCrosscorrSign5mVMin",
+			m_thrCrosscorrSign5mVMin,
+			"Minimun crosscorrelation for crosscorrelation with signal over all channels with signal over 5 mV threshrold");
+	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:thrCrosscorrSign5mVMax",
+			m_thrCrosscorrSign5mVMax,
+			"Maximum crosscorrelation for crosscorrelation with signal over all channels with signal over 5 mV threshrold");
 
 	m_thrCrosscorrSinCalo5mVMin = 2000;
 	m_thrCrosscorrSinCalo5mVMax = 5500;
+	gPARMS->SetDefaultParameter(
+			"TEVENT_FACTORY_BDXMINI:thrCrosscorrSinCalo5mVMin",
+			m_thrCrosscorrSinCalo5mVMin,
+			"Minimum crosscorrelation for crosscorrelation with sine over the calorimeter's channel with signal over 5 mV threshold");
+	gPARMS->SetDefaultParameter(
+			"TEVENT_FACTORY_BDXMINI:thrCrosscorrSinCalo5mVMax",
+			m_thrCrosscorrSinCalo5mVMax,
+			"Maximum crosscorrelation for crosscorrelation with sine over the calorimeter's channel with signal over 5 mV threshold");
 
 	m_thrCrosscorrSignCalo5mVMin = 4000;
 	m_thrCrosscorrSignCalo5mVMax = 12000;
+	gPARMS->SetDefaultParameter(
+			"TEVENT_FACTORY_BDXMINI:thrCrosscorrSignCalo5mVMax",
+			m_thrCrosscorrSignCalo5mVMin,
+			"Minimun crosscorrelation for crosscorrelation with signal over the calorimeter's channel with signal over 5 mV threshold");
+	gPARMS->SetDefaultParameter(
+			"TEVENT_FACTORY_BDXMINI:thrCrosscorrSignCalo5mVMax",
+			m_thrCrosscorrSignCalo5mVMax,
+			"Maximum crosscorrelation for crosscorrelation with signal over the calorimeter's channel with signal over 5 mV threshold");
 
 }
 //------------------
@@ -242,18 +296,21 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	m_event->addCollection(m_IntVetoHits);
 
 	//M.S
-	double c_sin=Crosscorrelations->crossCorrSine_calo;
-	double c_sign=Crosscorrelations->crossCorrSignal_calo;
-	if(c_sin>m_thrCrosscorrSinCaloMin && c_sin<m_thrCrosscorrSinCaloMax && c_sign<m_thrCrosscorrSignCaloMax)
+	double c_sin = Crosscorrelations->crossCorrSine_calo;
+	double c_sign = Crosscorrelations->crossCorrSignal_calo;
+	if (c_sin > m_thrCrosscorrSinCaloMin && c_sin < m_thrCrosscorrSinCaloMax
+			&& c_sign < m_thrCrosscorrSignCaloMax)
 		saveWaveforms_Crosscorr = true;
 
-	if(c_sign>m_thrCrosscorrSignCaloMin && c_sign<m_thrCrosscorrSignCaloMax && c_sin<m_thrCrosscorrSinCaloMax)
+	if (c_sign > m_thrCrosscorrSignCaloMin && c_sign < m_thrCrosscorrSignCaloMax
+			&& c_sin < m_thrCrosscorrSinCaloMax)
 		saveWaveforms_Crosscorr = true;
 
 	/*fa250Hits -only non MC*/
 	if (!m_isMC) {
 		m_fa250Mode1CalibPedSubHits->Clear("C");
-		if ((saveWaveforms_flagVeto && saveWaveforms_flagCalo) || saveWaveforms_Crosscorr) {
+		if ((saveWaveforms_flagVeto && saveWaveforms_flagCalo)
+				|| saveWaveforms_Crosscorr) {
 			loop->Get(fa250Hits);
 			for (int ii = 0; ii < fa250Hits.size(); ii++) {
 				((fa250Mode1CalibPedSubHit*) m_fa250Mode1CalibPedSubHits->ConstructedAt(
