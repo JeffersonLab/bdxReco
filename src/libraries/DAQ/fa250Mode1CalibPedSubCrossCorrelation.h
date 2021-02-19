@@ -34,6 +34,14 @@ class fa250Mode1CalibPedSubCrossCorrelation:public jana::JObject{
 		void toStrings(vector<pair<string,string> > &items)const{
 			// AddString(items, "id", "%4d", id);
 			// AddString(items, "E", "%f", E);
+			AddString(items, "crossCorrSine_tot", "%f", crossCorrSine_tot);
+			AddString(items, "crossCorrSignal_tot", "%f", crossCorrSignal_tot);
+			AddString(items, "crossCorrSine_5mVth", "%f", crossCorrSine_5mVth);
+			AddString(items, "crossCorrSignal_5mVth", "%f", crossCorrSignal_5mVth);
+			AddString(items, "crossCorrSine_calo", "%f", crossCorrSine_calo);
+			AddString(items, "crossCorrSignal_calo", "%f",crossCorrSignal_calo );
+			AddString(items, "crossCorrSine_5mVth_calo", "%f", crossCorrSine_5mVth_calo);
+			AddString(items, "crossCorrSignal_5mVth_calo", "%f", crossCorrSignal_5mVth_calo);
 		}
 		
 };
