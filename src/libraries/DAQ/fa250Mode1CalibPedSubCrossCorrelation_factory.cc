@@ -22,7 +22,7 @@ using namespace std;
 #include "fa250Mode1CalibPedSubHit.h"
 using namespace jana;
 
-double signal(double *x, double *par) {
+double fa250Mode1CalibPedSubCrossCorrelation_factory::signal(double *x, double *par) {
 	//Fit parameters:
 	//par[0]=starting time of signal
 	//par[1]= tao
@@ -34,6 +34,18 @@ double signal(double *x, double *par) {
 				* TMath::Exp(-(x[0] - par[0]) / par[1]) * par[2]
 				* (1 / (4 * TMath::Exp(-2) * TMath::Power(par[1], 2)));
 }
+
+
+double fa250Mode1CalibPedSubCrossCorrelation_factory::f380(double *x, double *par) {
+
+	return -par[0]*cos(par[1]*(x[0]-par[2]))+par[3];
+}
+
+double fa250Mode1CalibPedSubCrossCorrelation_factory::f600(double *x, double *par) {
+
+	return -par[0]*cos(par[1]*(x[0]-par[2]))+par[3];
+}
+
 //------------------
 // init
 //------------------
@@ -44,17 +56,18 @@ jerror_t fa250Mode1CalibPedSubCrossCorrelation_factory::init(void) {
 	tao = 30;
 	A = 2;
 
-	f1 = new TF1("f380", "-[0]*cos([1]*(x-[2]))+[3]");
+	f1 = new TF1("f380",this->f380,0,700,4);
 	f1->FixParameter(0, 1);
 	f1->FixParameter(1, 2 * TMath::Pi() / T1);
 	f1->FixParameter(3, 0);
-	f2 = new TF1("f600", "-[0]*cos([1]*(x-[2]))+[3]");
+
+	f2 = new TF1("f600",this->f380,0,700,4);
 	f2->FixParameter(0, 1);
 	f2->FixParameter(1, 2 * TMath::Pi() / T2);
 	f2->FixParameter(3, 0);
-	f3 = new TF1("signal", signal, 0, 700, 3);
-	f3->SetParameter(1, tao);
 
+	f3 = new TF1("signal", this->signal, 0, 700, 3);
+	f3->SetParameter(1, tao);
 	f3->SetParameter(2, A);
 	return NOERROR;
 }

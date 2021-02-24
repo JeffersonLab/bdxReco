@@ -115,7 +115,7 @@ jerror_t JEventProcessor_BDXMiniCrystals::init(void) {
 
 	NE = 500;
 	Emin = 100;
-	Emax = 600;
+	Emax = 600; //600
 
 	for (geometry_it = geometry.begin(); geometry_it != geometry.end(); geometry_it++) {
 		//Do whatever you want. To access the first part of pair(pair is the key of the map here) you should write
@@ -229,7 +229,7 @@ jerror_t JEventProcessor_BDXMiniCrystals::evnt(JEventLoop *loop, uint64_t eventn
 
 		japp->RootWriteLock();
 		if (sector == 0) { //TOP
-			hBDXMiniCrystalsEnergyTOP[id]->Fill(m_hit->E);
+			hBDXMiniCrystalsEnergyTOP[id]->Fill(m_hit->E); //E
 		} else { //BOTTOM
 			hBDXMiniCrystalsEnergyBOTTOM[id]->Fill(m_hit->E);
 		}

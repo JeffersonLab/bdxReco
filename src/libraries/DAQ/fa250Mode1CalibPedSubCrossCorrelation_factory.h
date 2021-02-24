@@ -26,6 +26,9 @@ class fa250Mode1CalibPedSubCrossCorrelation_factory:public jana::JFactory<fa250M
 		jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
+		static double signal(double *x, double *par);
+		static double f380(double *x, double *par);
+		static double f600(double *x, double *par);
 		double T1, T2;
 		double tao, A;
 		TF1 *f1;
