@@ -127,7 +127,7 @@ TEvent_factory_BDXmini::TEvent_factory_BDXmini() {
 	m_thrCrosscorrSignCalo5mVMin = 4000;
 	m_thrCrosscorrSignCalo5mVMax = 12000;
 	gPARMS->SetDefaultParameter(
-			"TEVENT_FACTORY_BDXMINI:thrCrosscorrSignCalo5mVMax",
+			"TEVENT_FACTORY_BDXMINI:thrCrosscorrSignCalo5mVMin",
 			m_thrCrosscorrSignCalo5mVMin,
 			"Minimun crosscorrelation for crosscorrelation with signal over the calorimeter's channel with signal over 5 mV threshold");
 	gPARMS->SetDefaultParameter(
@@ -188,10 +188,10 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 
 	const eventData *tData;
 	const triggerDataBDXmini *bdxtData;
-	const fa250Mode1CalibPedSubCrossCorrelation *Crosscorrelations; //M.S.
+	const fa250Mode1CalibPedSubCrossCorrelation *crosscorrelations; //M.S.
 
 	triggerDataBDXmini *bdxtData_write = new triggerDataBDXmini();
-	fa250Mode1CalibPedSubCrossCorrelation *Crosscorrelations_write =
+	fa250Mode1CalibPedSubCrossCorrelation *crosscorrelations_write =
 			new fa250Mode1CalibPedSubCrossCorrelation; //M.S.
 
 	vector<const CalorimeterCluster*> cclusters;
@@ -235,7 +235,7 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		}
 
 		try {
-			loop->GetSingle(Crosscorrelations);
+			loop->GetSingle(crosscorrelations);
 		} catch (unsigned long e) {
 			jout
 					<< "TEvent_factory_BDXmini::evnt no Crosscorrelations this event"
@@ -255,8 +255,8 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		m_eventHeader->setWeight(1);
 		*bdxtData_write = *bdxtData;
 		m_event->addObject(bdxtData_write);
-		*Crosscorrelations_write = *Crosscorrelations;
-		m_event->addObject(Crosscorrelations_write); //M.S.
+		*crosscorrelations_write = *crosscorrelations;
+		m_event->addObject(crosscorrelations_write); //M.S.
 
 	} else {
 		m_eventHeader->setEventType(BDXminiEvent);
@@ -296,8 +296,9 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	m_event->addCollection(m_IntVetoHits);
 
 	//M.S
-	double c_sin = Crosscorrelations->crossCorrSine_calo;
-	double c_sign = Crosscorrelations->crossCorrSignal_calo;
+
+	double c_sin = crosscorrelations->crossCorrSine_calo;
+	double c_sign = crosscorrelations->crossCorrSignal_calo;
 	if (c_sin > m_thrCrosscorrSinCaloMin && c_sin < m_thrCrosscorrSinCaloMax
 			&& c_sign < m_thrCrosscorrSignCaloMax)
 		saveWaveforms_Crosscorr = true;
