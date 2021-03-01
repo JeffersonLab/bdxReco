@@ -20,6 +20,9 @@ using namespace std;
 
 #include "fa250Mode1CalibPedSubCrossCorrelation_factory.h"
 #include "fa250Mode1CalibPedSubHit.h"
+
+
+#include <JANA/JApplication.h>
 using namespace jana;
 
 double fa250Mode1CalibPedSubCrossCorrelation_factory::signal(double *x, double *par) {
@@ -55,7 +58,7 @@ jerror_t fa250Mode1CalibPedSubCrossCorrelation_factory::init(void) {
 	T2 = 600;
 	tao = 30;
 	A = 2;
-
+	japp->RootWriteLock();
 	f1 = new TF1("f380",this->f380,0,700,4);
 	f1->FixParameter(0, 1);
 	f1->FixParameter(1, 2 * TMath::Pi() / T1);
@@ -69,6 +72,8 @@ jerror_t fa250Mode1CalibPedSubCrossCorrelation_factory::init(void) {
 	f3 = new TF1("signal", this->signal, 0, 700, 3);
 	f3->SetParameter(1, tao);
 	f3->SetParameter(2, A);
+
+	japp->RootUnLock();
 	return NOERROR;
 }
 
