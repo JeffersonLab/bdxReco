@@ -64,7 +64,7 @@ jerror_t fa250Mode1CalibPedSubCrossCorrelation_factory::init(void) {
 	f1->FixParameter(1, 2 * TMath::Pi() / T1);
 	f1->FixParameter(3, 0);
 
-	f2 = new TF1("f600",this->f380,0,700,4);
+	f2 = new TF1("f600",this->f600,0,700,4);
 	f2->FixParameter(0, 1);
 	f2->FixParameter(1, 2 * TMath::Pi() / T2);
 	f2->FixParameter(3, 0);
