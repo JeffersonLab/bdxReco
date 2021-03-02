@@ -14,11 +14,11 @@
 class fa250Mode1CalibPedSubCrossCorrelation:public jana::JObject{
 	public:
 		JOBJECT_PUBLIC(fa250Mode1CalibPedSubCrossCorrelation);
-		
+
 		// Add data members here. For example:
 		// int id;
 		// double E;
-		
+
 
 		double crossCorrSine_tot;
 		double crossCorrSignal_tot;
@@ -43,7 +43,8 @@ class fa250Mode1CalibPedSubCrossCorrelation:public jana::JObject{
 			AddString(items, "crossCorrSine_5mVth_calo", "%f", crossCorrSine_5mVth_calo);
 			AddString(items, "crossCorrSignal_5mVth_calo", "%f", crossCorrSignal_5mVth_calo);
 		}
-		
+
+		ClassDef(fa250Mode1CalibPedSubCrossCorrelation,1);
 };
 
 #endif // _fa250Mode1CalibPedSubCrossCorrelation_

@@ -40,7 +40,6 @@ double fa250Mode1CalibPedSubCrossCorrelation_factory::signal(double *x, double *
 
 
 double fa250Mode1CalibPedSubCrossCorrelation_factory::f380(double *x, double *par) {
-
 	return -par[0]*cos(par[1]*(x[0]-par[2]))+par[3];
 }
 
