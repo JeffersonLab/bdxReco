@@ -15,7 +15,6 @@
 #include "TROOT.h"
 #include <vector>
 #include <TMath.h>
-#include <TF1.h>
 using namespace std;
 
 #include "fa250Mode1CalibPedSubCrossCorrelation_factory.h"
@@ -25,28 +24,29 @@ using namespace std;
 #include <JANA/JApplication.h>
 using namespace jana;
 
-double fa250Mode1CalibPedSubCrossCorrelation_factory::signal(double *x, double *par) {
+
+
+double fa250Mode1CalibPedSubCrossCorrelation_factory::f1(double x, double par0,double par1,double par2,double par3) {
+	return -par0*cos(par1*(x-par2))+par3;
+}
+
+double fa250Mode1CalibPedSubCrossCorrelation_factory::f2(double x, double par0,double par1,double par2,double par3) {
+	return -par0*cos(par1*(x-par2))+par3;
+}
+
+double fa250Mode1CalibPedSubCrossCorrelation_factory::f3(double x,double par0,double par1,double par2) {
 	//Fit parameters:
 	//par[0]=starting time of signal
 	//par[1]= tao
 	//par[2]= amplitude
-	if (x[0] < par[0])
+	if (x < par0)
 		return 0;
 	else
-		return TMath::Power((x[0] - par[0]), 2)
-				* TMath::Exp(-(x[0] - par[0]) / par[1]) * par[2]
-				* (1 / (4 * TMath::Exp(-2) * TMath::Power(par[1], 2)));
+		return TMath::Power((x - par0), 2)
+				* TMath::Exp(-(x - par0) / par1) * par2
+				* (1 / (4 * TMath::Exp(-2) * TMath::Power(par1, 2)));
 }
 
-
-double fa250Mode1CalibPedSubCrossCorrelation_factory::f380(double *x, double *par) {
-	return -par[0]*cos(par[1]*(x[0]-par[2]))+par[3];
-}
-
-double fa250Mode1CalibPedSubCrossCorrelation_factory::f600(double *x, double *par) {
-
-	return -par[0]*cos(par[1]*(x[0]-par[2]))+par[3];
-}
 
 //------------------
 // init
@@ -57,22 +57,7 @@ jerror_t fa250Mode1CalibPedSubCrossCorrelation_factory::init(void) {
 	T2 = 600;
 	tao = 30;
 	A = 2;
-	japp->RootWriteLock();
-	f1 = new TF1("f380",this->f380,0,700,4);
-	f1->FixParameter(0, 1);
-	f1->FixParameter(1, 2 * TMath::Pi() / T1);
-	f1->FixParameter(3, 0);
 
-	f2 = new TF1("f600",this->f600,0,700,4);
-	f2->FixParameter(0, 1);
-	f2->FixParameter(1, 2 * TMath::Pi() / T2);
-	f2->FixParameter(3, 0);
-
-	f3 = new TF1("signal", this->signal, 0, 700, 3);
-	f3->SetParameter(1, tao);
-	f3->SetParameter(2, A);
-
-	japp->RootUnLock();
 	return NOERROR;
 }
 
@@ -144,15 +129,12 @@ jerror_t fa250Mode1CalibPedSubCrossCorrelation_factory::evnt(JEventLoop *loop,
 			data[jj] = (data[jj] - mid) / f_max;
 		}
 
-		f1->FixParameter(2, t_min);
-
-		f2->FixParameter(2, t_min);
 
 		//find parameters for signal
 		double ped = (f_min - mid) / f_max;
 
 		double t_0 = t_max - 2 * tao;
-		f3->SetParameter(0, t_0);
+
 
 		//evaluating crosscorrelation
 		double crosscorrelation1 = 0;
@@ -161,6 +143,7 @@ jerror_t fa250Mode1CalibPedSubCrossCorrelation_factory::evnt(JEventLoop *loop,
 		double crosscorrelation4 = 0;
 		double crosscorrelation5 = 0;
 		double crosscorrelation6 = 0;
+
 
 		for (int jj = 0; jj < data.size(); jj++) {
 			//excluding broken channels ???
@@ -172,11 +155,11 @@ jerror_t fa250Mode1CalibPedSubCrossCorrelation_factory::evnt(JEventLoop *loop,
 				break;
 			if (slot == 1 && channel == 15)
 				break;
-			crosscorrelation3 += (data[jj] - ped) * f3->Eval(jj * dT) * dT;
+			crosscorrelation3 += (data[jj] - ped) * this->f3(jj * dT,t_0,tao,A) * dT;
 			if (slot == 1 && channel > 4) {
-				crosscorrelation6 += (data[jj] - ped) * f3->Eval(jj * dT) * dT;
+				crosscorrelation6 += (data[jj] - ped) * this->f3(jj * dT,t_0,tao,A) * dT;
 			} else if (slot > 1) {
-				crosscorrelation6 += (data[jj] - ped) * f3->Eval(jj * dT) * dT;
+				crosscorrelation6 += (data[jj] - ped) * this->f3(jj * dT,t_0,tao,A) * dT;
 			}
 		}
 
@@ -200,13 +183,15 @@ jerror_t fa250Mode1CalibPedSubCrossCorrelation_factory::evnt(JEventLoop *loop,
 				break;
 			if (slot == 1 && channel == 15)
 				break;
-			crosscorrelation1 += data[jj] * f1->Eval(jj * dT) * dT;
+			crosscorrelation1 += data[jj] * this->f1(jj * dT,1,2 * TMath::Pi() / T1,t_min,0) * dT;
 			if (slot == 1 && channel > 4) {
-				crosscorrelation4 += data[jj] * f1->Eval(jj * dT) * dT;
+				crosscorrelation4 += data[jj] * this->f1(jj * dT,1,2 * TMath::Pi() / T1,t_min,0) * dT;
 			} else if (slot > 1) {
-				crosscorrelation4 += data[jj] * f1->Eval(jj * dT) * dT;
+				crosscorrelation4 += data[jj] * this->f1(jj * dT,1,2 * TMath::Pi() / T1,t_min,0) * dT;
 			}
 		}
+
+
 
 		for (int jj = 0; jj < deltaT2; jj++) {
 			if (slot == 0 && channel == 2)
@@ -217,11 +202,11 @@ jerror_t fa250Mode1CalibPedSubCrossCorrelation_factory::evnt(JEventLoop *loop,
 				break;
 			if (slot == 1 && channel == 15)
 				break;
-			crosscorrelation2 += data[jj] * f2->Eval(jj * dT) * dT;
+			crosscorrelation2 += data[jj] * this->f2(jj * dT,1,2 * TMath::Pi() / T2,t_min,0) * dT;
 			if (slot == 1 && channel > 4) {
-				crosscorrelation5 += data[jj] * f2->Eval(jj * dT) * dT;
+				crosscorrelation5 += data[jj] * this->f2(jj * dT,1,2 * TMath::Pi() / T2,t_min,0) * dT;
 			} else if (slot > 1) {
-				crosscorrelation5 += data[jj] * f2->Eval(jj * dT) * dT;
+				crosscorrelation5 += data[jj] * this->f2(jj * dT,1,2 * TMath::Pi() / T2,t_min,0) * dT;
 			}
 		}
 
