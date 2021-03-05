@@ -75,7 +75,7 @@ jerror_t fa250Mode1CalibPedSubCrossCorrelation_factory::brun(
 jerror_t fa250Mode1CalibPedSubCrossCorrelation_factory::evnt(JEventLoop *loop,
 		uint64_t eventnumber) {
 
-	cout << "inizio factory" << endl;
+
 	//code to read waveforms
 	vector<const fa250Mode1CalibPedSubHit*> waves;
 	loop->Get(waves);
