@@ -295,20 +295,25 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	}
 	m_event->addCollection(m_IntVetoHits);
 
-	//M.S
 
-	double c_sin = crosscorrelations->crossCorrSine_calo;
-	double c_sign = crosscorrelations->crossCorrSignal_calo;
-	if (c_sin > m_thrCrosscorrSinCaloMin && c_sin < m_thrCrosscorrSinCaloMax
-			&& c_sign < m_thrCrosscorrSignCaloMax)
-		saveWaveforms_Crosscorr = true;
 
-	if (c_sign > m_thrCrosscorrSignCaloMin && c_sign < m_thrCrosscorrSignCaloMax
-			&& c_sin < m_thrCrosscorrSinCaloMax)
-		saveWaveforms_Crosscorr = true;
 
 	/*fa250Hits -only non MC*/
 	if (!m_isMC) {
+
+		//M.S
+		double c_sin = crosscorrelations->crossCorrSine_calo;
+		double c_sign = crosscorrelations->crossCorrSignal_calo;
+		if (c_sin > m_thrCrosscorrSinCaloMin && c_sin < m_thrCrosscorrSinCaloMax
+				&& c_sign < m_thrCrosscorrSignCaloMax)
+			saveWaveforms_Crosscorr = true;
+
+		if (c_sign > m_thrCrosscorrSignCaloMin && c_sign < m_thrCrosscorrSignCaloMax
+				&& c_sin < m_thrCrosscorrSinCaloMax)
+			saveWaveforms_Crosscorr = true;
+
+
+
 		m_fa250Mode1CalibPedSubHits->Clear("C");
 		if ((saveWaveforms_flagVeto && saveWaveforms_flagCalo)
 				|| saveWaveforms_Crosscorr) {
