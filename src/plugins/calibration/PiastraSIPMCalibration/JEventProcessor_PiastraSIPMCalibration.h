@@ -1,24 +1,24 @@
 // $Id$
 //
-//    File: JEventProcessor_PiastraSipm.h
-// Created: Fri Mar  6 18:54:14 CET 2020
-// Creator: celentan (on Darwin celentano-macbook 19.3.0 i386)
+//    File: JEventProcessor_PiastraSIPMCalibration.h
+// Created: Tue Aug 20 15:47:25 CEST 2019
+// Creator: celentan (on Linux apcx4 3.10.0-957.el7.x86_64 x86_64)
 //
 
-#ifndef _JEventProcessor_PiastraSipm_
-#define _JEventProcessor_PiastraSipm_
+#ifndef _JEventProcessor_PiastraSIPMCalibration_
+#define _JEventProcessor_PiastraSIPMCalibration_
 
 #include <JANA/JEventProcessor.h>
+#include <map>
+#include "TH1D.h"
 
-class TTree;
-class TH1D;
 class JROOTOutput;
-class JEventProcessor_PiastraSipm: public jana::JEventProcessor {
+class JEventProcessor_PiastraSIPMCalibration: public jana::JEventProcessor {
 public:
-	JEventProcessor_PiastraSipm();
-	~JEventProcessor_PiastraSipm();
+	JEventProcessor_PiastraSIPMCalibration();
+	~JEventProcessor_PiastraSIPMCalibration();
 	const char* className(void) {
-		return "JEventProcessor_PiastraSipm";
+		return "JEventProcessor_PiastraSIPMCalibration";
 	}
 
 private:
@@ -28,16 +28,11 @@ private:
 	jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 	jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
-	TTree *m_t;
-	int eventNumber;
-	uint tWord;
 	int m_isFirstCallToBrun;
-
-	double m_A[4],m_T[4];
-	ULong64_t m_tSec,m_tNanoSec;
-
 	JROOTOutput *m_ROOTOutput;
+	int m_isMC;
+
 };
 
-#endif // _JEventProcessor_PiastraSipm_
+#endif // _JEventProcessor_PiastraSIPMCalibration_
 

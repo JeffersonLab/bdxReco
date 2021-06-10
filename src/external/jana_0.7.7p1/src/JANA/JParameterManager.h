@@ -285,17 +285,20 @@ JParameter* JParameterManager::GetParameterNoLock(K key)
 	/// the parameters list is not modified while it is being read.
 	/// The only drawback is that reads are also serialized possibly
 	/// losing a little in efficiency when running multi-threaded. 
-	
+
 	string skey(key);
 	vector<JParameter*>::iterator iter = parameters.begin();
 	for(; iter!= parameters.end(); iter++){
 		if((*iter)->GetKey() == skey){
+
 			return *iter;
 		}
 	}
 
+
 	return NULL;
 }
+
 
 //---------------------------------
 // GetParameter
@@ -316,9 +319,11 @@ JParameter* JParameterManager::GetParameter(K key)
 	// release the parameters mutex
 	pthread_mutex_unlock(&parameter_mutex);
 	
+
 	// If parameter does not exist, thrown an exception
 	if(!p){
 		string mess = "Parameter does not exist: " + string(key);
+		verbose=true;
 		if(verbose) jerr << mess << std::endl;
 		throw JException(mess);
 	}

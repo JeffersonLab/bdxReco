@@ -71,7 +71,6 @@ libExt=SConscript('src/external/SConstruct')
 lib=SConscript('src/libraries/SConstruct')
 progs=SConscript('src/programs/SConstruct')
 plugins=SConscript('src/plugins/SConstruct')
-users=SConscript('src/users/SConstruct')
 
 
 

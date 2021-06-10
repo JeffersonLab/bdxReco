@@ -49,8 +49,9 @@ BDXEventProcessor::~BDXEventProcessor() {
 // init
 jerror_t BDXEventProcessor::init(void) {
 
-	bout << "BDXEventProcessor::init" << endl;
+	bout << "BDXEventProcessor::init " <<gPARMS<< endl;
 	gPARMS->GetParameter("MC", m_isMC);
+	bout <<m_isMC<<" : isMC "<<endl;
 	gPARMS->SetDefaultParameter("SYSTEM:BUILD_DST", m_buildDST, "Enable DST, using the form \"TYPE\". TYPE is the name of an existing event builder. Example: -PSYSTEM:BUILD_DST=\"CataniaProto2\" (also: FullMC, JLabFlux)");
 	bout << "Building DST is: " << m_buildDST << endl;
 

@@ -60,7 +60,8 @@ private:
 	TRIDASDAQSourceType source_type;
 	int curRunNumber, curEventNumber, curEventType;
 	int overwriteRunNumber;
-
+	int year;
+	int year_ut;
 	PtFileReader<sample::uncompressed> *ptReader;
 
 	//ITerator on file, each instance is a timeslice

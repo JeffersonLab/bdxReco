@@ -28,12 +28,13 @@ class JEventProcessor_IntVeto_SipmCalib:public jana::JEventProcessor{
 
 		TTree *t;
 		TH1D *h;
-		int eventNumber;
+		uint eventNumber;
+		uint eventTS;
 		uint tWord;
 		int m_isFirstCallToBrun;
 
 		int m_sector,m_layer,m_component,m_readout,m_type;
-		double Qphe,Qraw,T,A;
+		double Qphe,Qraw,T,Ttot,A,Aphe;
 
 
 		JROOTOutput *m_ROOTOutput;

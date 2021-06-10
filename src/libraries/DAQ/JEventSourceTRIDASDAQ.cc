@@ -4,6 +4,7 @@
 #include <iostream>
 #include <time.h>
 #include <unistd.h>
+#include <ctime>
 using namespace std;
 
 // JANA headers
@@ -37,6 +38,27 @@ JEventSourceTRIDASDAQ::JEventSourceTRIDASDAQ(const char* source_name) :
 	ptTimeSlice = new TimeSlice<sample::uncompressed>(*it_ptReader);
 	it_ptTimeSlice = ptTimeSlice->begin();
 
+	year = 2021;
+	gPARMS->SetDefaultParameter("TRIDAS_DAQ:YEAR", year);
+
+	time_t rawtime;
+	struct tm timeinfo;
+	/* get current timeinfo: */
+	time(&rawtime); //or: rawtime = time(0);
+	/* convert to struct: */
+	timeinfo = *localtime(&rawtime);
+
+	/* now modify the timeinfo to the given date: */
+	timeinfo.tm_year = year - 1900;
+	timeinfo.tm_mon = 0;    //months since January - [0,11]
+	timeinfo.tm_mday = 1;          //day of the month - [1,31]
+	timeinfo.tm_hour = 0;         //hours since midnight - [0,23]
+	timeinfo.tm_min = 0;          //minutes after the hour - [0,59]
+	timeinfo.tm_sec = 0;          //seconds after the minute - [0,59]
+
+	year_ut = timegm(&timeinfo);
+
+	jout <<" Measurement year: "<<year<<" unix time (in s) of 1 Jan 00:00 of that year: "<<year_ut<<endl;
 	//currEventTimeSlice = 0;
 	jout << "JEventSourceTRIDASDAQ creator DONE: " << this << endl;
 
@@ -125,15 +147,24 @@ jerror_t JEventSourceTRIDASDAQ::GetObjects(JEvent & event, JFactory_base * facto
 
 		Event<sample::uncompressed> *ptEvent_pointer = (Event<sample::uncompressed>*) event.GetRef();
 
-		//take the first hit time (4 ns from 1 Jan. 2000) -- all hits in the event are within the same second!
-		fine_time minTime = getDFHFullTime((*(ptEvent_pointer->begin())).frameHeader(0));
+		//take the first hit time from the start of the year in 4 ns units -- all hits in the event are within the same second!
+		//the year is the one when the measurement was REALLY performed - to have the REAL unix time - it is passed in by the user
+		fine_time minTime = getDFHYearTime((*(ptEvent_pointer->begin())).frameHeader(0));
 
-		this_eventData->time = std::chrono::duration_cast<std::chrono::seconds>(minTime).count(); //seconds from 1 Jan. 2000
-		this_eventData->time += 946684800; //unix time of 1 Jan 2000 first second
+		//Determine the number of nano-seconds inside the second
+		this_eventData->fineTime = (minTime % std::chrono::seconds(1)).count() * 4; //multiply by 4 to have nano-seconds
+
+		//Determine the number of seconds from 1 Jan
+		this_eventData->time = std::chrono::duration_cast<std::chrono::seconds>(minTime).count();
+		//now add the time of 1 Jan of the year
+		this_eventData->time += year_ut;
+		//since day 0 does not exist, need to subtract one day
+		this_eventData->time -= 60*60*24;
 
 		this_eventData->runN = event.GetRunNumber();
 		this_eventData->eventN = event.GetEventNumber();
 		this_eventData->eventTS = event.GetEventTS();
+
 
 		this_eventData->triggerWords.push_back(Event<sample::uncompressed>::max_triggers_number); //currently 5
 		for (int ii = 0; ii < Event<sample::uncompressed>::max_triggers_number; ii++) {

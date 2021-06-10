@@ -1,24 +1,24 @@
 // $Id$
 //
-//    File: JEventProcessor_PiastraSipm.h
+//    File: JEventProcessor_PiastraSipmSingleHit.h
 // Created: Fri Mar  6 18:54:14 CET 2020
 // Creator: celentan (on Darwin celentano-macbook 19.3.0 i386)
 //
 
-#ifndef _JEventProcessor_PiastraSipm_
-#define _JEventProcessor_PiastraSipm_
+#ifndef _JEventProcessor_PiastraSipmSingleHit_
+#define _JEventProcessor_PiastraSipmSingleHit_
 
 #include <JANA/JEventProcessor.h>
 
 class TTree;
 class TH1D;
 class JROOTOutput;
-class JEventProcessor_PiastraSipm: public jana::JEventProcessor {
+class JEventProcessor_PiastraSipmSingleHit: public jana::JEventProcessor {
 public:
-	JEventProcessor_PiastraSipm();
-	~JEventProcessor_PiastraSipm();
+	JEventProcessor_PiastraSipmSingleHit();
+	~JEventProcessor_PiastraSipmSingleHit();
 	const char* className(void) {
-		return "JEventProcessor_PiastraSipm";
+		return "JEventProcessor_PiastraSipmSingleHit";
 	}
 
 private:
@@ -33,11 +33,11 @@ private:
 	uint tWord;
 	int m_isFirstCallToBrun;
 
-	double m_A[4],m_T[4];
+	int counter;
 	ULong64_t m_tSec,m_tNanoSec;
 
 	JROOTOutput *m_ROOTOutput;
 };
 
-#endif // _JEventProcessor_PiastraSipm_
+#endif // _JEventProcessor_PiastraSipmSingleHit_
 

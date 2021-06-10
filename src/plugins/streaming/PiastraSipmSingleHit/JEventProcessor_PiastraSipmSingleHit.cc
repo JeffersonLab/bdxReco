@@ -1,11 +1,11 @@
 // $Id$
 //
-//    File: JEventProcessor_PiastraSipm.cc
+//    File: JEventProcessor_PiastraSipmSingleHit.cc
 // Created: Fri Mar  6 18:54:14 CET 2020
 // Creator: celentan (on Darwin celentano-macbook 19.3.0 i386)
 //
 
-#include "JEventProcessor_PiastraSipm.h"
+#include "JEventProcessor_PiastraSipmSingleHit.h"
 using namespace jana;
 
 // Routine used to create our JEventProcessor
@@ -30,30 +30,30 @@ using namespace jana;
 extern "C" {
 void InitPlugin(JApplication *app) {
 	InitJANAPlugin(app);
-	app->AddProcessor(new JEventProcessor_PiastraSipm());
+	app->AddProcessor(new JEventProcessor_PiastraSipmSingleHit());
 }
 } // "C"
 
 //------------------
-// JEventProcessor_PiastraSipm (Constructor)
+// JEventProcessor_PiastraSipmSingleHit (Constructor)
 //------------------
-JEventProcessor_PiastraSipm::JEventProcessor_PiastraSipm() {
+JEventProcessor_PiastraSipmSingleHit::JEventProcessor_PiastraSipmSingleHit() {
 	m_ROOTOutput = 0;
 	m_isFirstCallToBrun = 1;
 	m_t = 0;
 }
 
 //------------------
-// ~JEventProcessor_PiastraSipm (Destructor)
+// ~JEventProcessor_PiastraSipmSingleHit (Destructor)
 //------------------
-JEventProcessor_PiastraSipm::~JEventProcessor_PiastraSipm() {
+JEventProcessor_PiastraSipmSingleHit::~JEventProcessor_PiastraSipmSingleHit() {
 
 }
 
 //------------------
 // init
 //------------------
-jerror_t JEventProcessor_PiastraSipm::init(void) {
+jerror_t JEventProcessor_PiastraSipmSingleHit::init(void) {
 
 	//
 
@@ -61,9 +61,7 @@ jerror_t JEventProcessor_PiastraSipm::init(void) {
 	m_t = new TTree("PiastraDST", "PiastraDST");
 
 	//add branches
-	m_t->Branch("A", &m_A[0], "A[4]/D");
-	m_t->Branch("T", &m_T[0], "T[4]/D");
-
+	m_t->Branch("counter",&counter);
 	m_t->Branch("tSec", &m_tSec);
 	m_t->Branch("tNanoSec", &m_tNanoSec);
 
@@ -75,7 +73,7 @@ jerror_t JEventProcessor_PiastraSipm::init(void) {
 //------------------
 // brun
 //------------------
-jerror_t JEventProcessor_PiastraSipm::brun(JEventLoop *eventLoop, int32_t runnumber) {
+jerror_t JEventProcessor_PiastraSipmSingleHit::brun(JEventLoop *eventLoop, int32_t runnumber) {
 	// This is called whenever the run number changes
 	if (m_isFirstCallToBrun) {
 		string class_name, this_class_name;
@@ -119,7 +117,7 @@ jerror_t JEventProcessor_PiastraSipm::brun(JEventLoop *eventLoop, int32_t runnum
 //------------------
 // evnt
 //------------------
-jerror_t JEventProcessor_PiastraSipm::evnt(JEventLoop *loop, uint64_t eventnumber) {
+jerror_t JEventProcessor_PiastraSipmSingleHit::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	// This is called for every event. Use of common resources like writing
 	// to a file or filling a histogram should be mutex protected. Using
 	// loop->Get(...) to get reconstructed objects (and thereby activating the
@@ -134,12 +132,12 @@ jerror_t JEventProcessor_PiastraSipm::evnt(JEventLoop *loop, uint64_t eventnumbe
 	//  ... fill historgrams or trees ...
 	// japp->RootUnLock();
 
-	bool hasComponent[4] = { false, false, false, false };
-	double T[4], A[4];
+
+	int nComponents = 0;
 	vector<const IntVetoDigiHit*> hits;
 	loop->Get(hits);
 
-	if (hits.size() != 4) return NOERROR;
+	if (hits.size() != 1) return NOERROR;
 
 	const eventData* eData;
 
@@ -151,26 +149,17 @@ jerror_t JEventProcessor_PiastraSipm::evnt(JEventLoop *loop, uint64_t eventnumbe
 
 	for (auto hit : hits) {
 		if ((hit->m_channel.component < 0) || (hit->m_channel.component >= 4)) continue;
-		hasComponent[hit->m_channel.component] = true;
-		T[hit->m_channel.component] = hit->T;
-		A[hit->m_channel.component] = hit->Aphe;
-
-	}
-	for (int ii = 0; ii < 4; ii++) {
-		if (hasComponent[ii] == false) {
-			return NOERROR;
-		}
+		nComponents++;
+		counter = hit->m_channel.component;
 	}
 
-	japp->RootWriteLock();
-	m_tSec = eData->time;
-	m_tNanoSec = eData->fineTime;
-	for (int ii = 0; ii < 4; ii++) {
-		m_A[ii]=A[ii];
-		m_T[ii]=T[ii];
+	if (nComponents == 1) {
+		app->RootWriteLock();
+		m_tSec = eData->time;
+		m_tNanoSec = eData->fineTime;
+		m_t->Fill();
+		japp->RootUnLock();
 	}
-	m_t->Fill();
-	japp->RootUnLock();
 
 	return NOERROR;
 }
@@ -178,7 +167,7 @@ jerror_t JEventProcessor_PiastraSipm::evnt(JEventLoop *loop, uint64_t eventnumbe
 //------------------
 // erun
 //------------------
-jerror_t JEventProcessor_PiastraSipm::erun(void) {
+jerror_t JEventProcessor_PiastraSipmSingleHit::erun(void) {
 	// This is called whenever the run number changes, before it is
 	// changed to give you a chance to clean up before processing
 	// events from the next run number.
@@ -188,7 +177,7 @@ jerror_t JEventProcessor_PiastraSipm::erun(void) {
 //------------------
 // fini
 //------------------
-jerror_t JEventProcessor_PiastraSipm::fini(void) {
+jerror_t JEventProcessor_PiastraSipmSingleHit::fini(void) {
 	// Called before program exit after event processing is finished.
 	return NOERROR;
 }

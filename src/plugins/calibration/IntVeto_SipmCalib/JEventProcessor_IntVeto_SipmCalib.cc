@@ -23,12 +23,13 @@ using namespace jana;
 #include <IntVeto/IntVetoDigiHit.h>
 #include <IntVeto/IntVetoSiPMHit.h>
 
-
 #include <system/JROOTOutput.h>
 
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TTree.h"
+
+unsigned long int eventTS_0=9999999999999;
 
 extern "C" {
 void InitPlugin(JApplication *app) {
@@ -82,7 +83,9 @@ jerror_t JEventProcessor_IntVeto_SipmCalib::init(void) {
 	t->Branch("Qraw", &Qraw);
 	t->Branch("T", &T);
 	t->Branch("A", &A);
+	t->Branch("Aphe", &Aphe);
 	t->Branch("eventN", &eventNumber);
+	t->Branch("eventTS", &eventTS);
 
 	t->Branch("tWord", &tWord);
 
@@ -164,6 +167,10 @@ jerror_t JEventProcessor_IntVeto_SipmCalib::evnt(JEventLoop *loop, uint64_t even
 
 	if ((triggerBit == -1) || (((tWord >> triggerBit) & 0x1) == 0x1)) {
 		japp->RootWriteLock();
+		if (tData->eventTS<eventTS_0) eventTS_0=tData->eventTS;
+
+
+
 		//  ... fill historgrams or trees ...
 		for (data_it = data.begin(); data_it < data.end(); data_it++) {
 			m_sector = (*data_it)->m_channel.int_veto->sector;
@@ -173,9 +180,11 @@ jerror_t JEventProcessor_IntVeto_SipmCalib::evnt(JEventLoop *loop, uint64_t even
 			m_type = (*data_it)->m_type;
 			T = (*data_it)->T;
 			A = (*data_it)->Araw;
+			Aphe = (*data_it)->Aphe;
 			Qphe = (*data_it)->Qphe;
 			Qraw = (*data_it)->Qraw;
-			eventNumber = eventnumber;
+			eventNumber = (uint)(tData->eventN);
+			eventTS = (uint)(tData->eventTS - eventTS_0);
 			t->Fill();
 		}
 		japp->RootUnLock();

@@ -12,19 +12,26 @@ IntVetoSiPMHit* IntVetofa250Converter::convertHit(const fa250Hit *hit, const Tra
 	IntVetoSiPMHit *m_IntVetoSiPMHit = new IntVetoSiPMHit;
 	m_IntVetoSiPMHit->m_channel = m_channel;
 
+	jerror_t ret;
+
 	if (strcmp(hit->className(), "fa250Mode1CalibPedSubHit") == 0) {
-		this->convertMode1Hit(m_IntVetoSiPMHit, (const fa250Mode1CalibPedSubHit*) hit, eventN);
+		ret = this->convertMode1Hit(m_IntVetoSiPMHit, (const fa250Mode1CalibPedSubHit*) hit, eventN);
 	} else if (strcmp(hit->className(), "fa250Mode7Hit") == 0) {
-		this->convertMode7Hit(m_IntVetoSiPMHit, (const fa250Mode7Hit*) hit, eventN);
+		ret = this->convertMode7Hit(m_IntVetoSiPMHit, (const fa250Mode7Hit*) hit, eventN);
 	} else {
 		jerr << "IntVetofa250Converter::convertHit unsupported class name: " << hit->className() << std::endl;
 		return 0;
 	}
-	return m_IntVetoSiPMHit;
+	if (ret == NOERROR) {
+		return m_IntVetoSiPMHit;
+	} else {
+		return 0;
+	}
 }
 
-jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa250Mode1CalibPedSubHit *input, int eventN) const {
+jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit *output, const fa250Mode1CalibPedSubHit *input, int eventN) const {
 	int size = input->samples.size();
+
 	// Copy the fa250Hit part (crate, slot, channel, ...)
 	// doing it this way allow one to modify fa250 later and
 	// not have to change this code.
@@ -56,36 +63,22 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 	output->nSingles = 0;
 	output->average = 0;
 
-	//0: refine pedestal, should be ~0 already
-	//0a: check if we can use this waveform as pedestal
-	found = false;
-	pedRMSmin = 9999;
-	/*Just do few checks!!!*/
-	for (icheck = 0; icheck < NRMSCHECKS; icheck++) {
-		//Compute pedestal and rms starting at this point
-		istart = icheck * (size / NRMSCHECKS);
-		if ((istart + m_NPEDs) >= size) istart = size - m_NPED - 1;
-		ped = 0;
-		pedRMS = 0;
-		for (int ii = 0; ii < m_NPEDs; ii++) {
-			ped += input->samples[ii + istart];
-			pedRMS += input->samples[ii + istart] * input->samples[ii + istart];
+	ped = 0;
+	pedRMS = 0;
 
-		}
-		ped /= m_NPEDs;
-		pedRMS /= m_NPEDs;
-		pedRMS = sqrt(pedRMS - ped * ped);
-
-		if (pedRMS <= input->m_RMS * m_RMSTHRscale) {	//input->m_RMS is read from DB. This is the DAQ-measured RMS, equal for all hits in the same channel and the same run)
-			found = true;
-			break;
-		}
-	}
-	if (found == false) {/*It means we were not able to correct the pedestal here!*/
-		ped = 0;
+	if (size < m_NPEDs) {
+		return OBJECT_NOT_AVAILABLE;
 	}
 
-	//0b produced the waveform
+	for (int ii = 0; ii < m_NPEDs; ii++) {
+		ped += input->samples[ii];
+		pedRMS += input->samples[ii] * input->samples[ii];
+
+	}
+	ped /= m_NPEDs;
+	pedRMS /= m_NPEDs;
+	pedRMS = sqrt(pedRMS - ped * ped);
+
 	for (int ii = 0; ii < size; ii++) {
 		m_waveform.push_back(input->samples[ii] - ped);
 	}
@@ -103,7 +96,6 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 	thr = m_thrCalib->getCalibSingle(*output->m_channel.int_veto); //this is the 1 phe ampl FROM DB
 
 	thr = thr * m_thr;   //put a very low thr at this level
-
 
 	//2: find thr crossings
 	m_thisCrossingTime.first = -1;
@@ -148,7 +140,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 	output->nSingles = m_singleCrossingIndexes.size();
 	if ((output->nSingles) == 0) {
 		output->m_type = IntVetoSiPMHit::noise;
-		output->Qraw = this->sumSamples((m_NSAs + m_NSBs > m_waveform.size()) ? m_waveform.size() : m_NSAs+m_NSBs, &(m_waveform[0]));  //for compatibility with case 1
+		output->Qraw = this->sumSamples((m_NSAs + m_NSBs > m_waveform.size()) ? m_waveform.size() : m_NSAs + m_NSBs, &(m_waveform[0]));  //for compatibility with case 1
 		output->Araw = this->getMaximum(m_waveform.size(), &(m_waveform[0]), output->T);
 		output->T = -1;
 		return NOERROR;
@@ -167,7 +159,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 			if (ixmin < 0) ixmin = 0;
 			if (ixmax >= m_waveform.size()) ixmax = m_waveform.size() - 1;
 
-			max = this->getMaximum(ixmin,ixmax, &(m_waveform[0]), Tmax);
+			max = this->getMaximum(ixmin, ixmax, &(m_waveform[0]), Tmax);
 			if ((output->Araw) < max) {
 				output->Araw = max;
 				imax = idx;
@@ -185,7 +177,6 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 
 		max = this->getMaximum(ixmin, ixmax, &(m_waveform[0]), Tmax);
 
-
 		xmin = Tmax - m_NSAs;
 		if (xmin < 0) xmin = 0;
 		xmax = Tmax + m_NSBs;
@@ -197,15 +188,13 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 		output->T = Tmax;
 		output->T *= input->m_dT; //in NS!!!
 
-
 		return NOERROR;
 	}
-
 
 	return NOERROR;
 }
 
-jerror_t IntVetofa250Converter::convertMode7Hit(IntVetoSiPMHit* output, const fa250Mode7Hit *input, int eventN) const {
+jerror_t IntVetofa250Converter::convertMode7Hit(IntVetoSiPMHit *output, const fa250Mode7Hit *input, int eventN) const {
 	output->AddAssociatedObject(input);
 
 	return NOERROR;

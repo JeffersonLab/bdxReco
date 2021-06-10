@@ -1,0 +1,21 @@
+<!--  PAY ATTENTION TO THE FACT THAT IN THE CALORIMETER ROW IS Y AND COL IS X      -->
+<!--                                                                               -->
+<!--        ^                                                                      -->
+<!-- ROW(Y) |                                                                      -->
+<!--        |                                                                      -->
+<!--        |                                                                      -->
+<!--        |_____>                                                                -->
+<!--              ->X (COLUMN)                                                     -->
+
+<bdx_translation_table version="0.2">
+  <crate number="0" type="VXS">
+    <slot number="0" type="CPU">
+    </slot>
+    <slot number="1" type="fADC250">
+        <channel number="0" detector="INT_VETO" sector="0" layer="0" component="0" readout="1"/>
+        <channel number="2" detector="INT_VETO" sector="0" layer="0" component="1" readout="1"/>
+        <channel number="4" detector="INT_VETO" sector="0" layer="0" component="2" readout="1"/>
+        <channel number="8" detector="INT_VETO" sector="0" layer="0" component="3" readout="1"/>
+    </slot>
+  </crate>
+</bdx_translation_table>

@@ -14,6 +14,10 @@
 #include "TString.h"
 //#include <vector>
 
+
+#include <TRIDAS/ptfile_reader.hpp>
+using namespace tridas::post_trigger;
+
 typedef enum {
 	DAQ=1,EPICS=2,CONF=3
 } eventSource;
@@ -26,8 +30,11 @@ class eventData:public jana::JObject{
 		unsigned long int eventTS; //This has been added for the TRIDAS system, where an event is identified uniquely by an TS id and an event ID
 		unsigned int runN;
 		unsigned long int time; //event time in UNIX time stamp (seconds)
+		unsigned long int fineTime; //The nano-seconds inside the event time
+
 		std::vector<uint32_t> triggerWords;
 		
+
 		int eventType;
 
 
@@ -38,6 +45,7 @@ class eventData:public jana::JObject{
 			AddString(items,"eventN","%lu",eventN);
 			AddString(items,"eventTS","%lu",eventTS);
 			AddString(items,"time","%lu",time);
+			AddString(items,"fineTime","%lu",fineTime);
 			for (int iword=0;iword<triggerWords.size();iword++){
 			 AddString(items, Form("word_%i",iword), "%x", triggerWords[iword]);
 			}
