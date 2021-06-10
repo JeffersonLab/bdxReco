@@ -149,11 +149,13 @@ jerror_t JEventProcessor_PiastraSipm::evnt(JEventLoop *loop, uint64_t eventnumbe
 		return OBJECT_NOT_AVAILABLE;
 	}
 
+
 	for (auto hit : hits) {
 		if ((hit->m_channel.component < 0) || (hit->m_channel.component >= 4)) continue;
 		hasComponent[hit->m_channel.component] = true;
 		T[hit->m_channel.component] = hit->T;
 		A[hit->m_channel.component] = hit->Aphe;
+
 
 	}
 	for (int ii = 0; ii < 4; ii++) {
@@ -171,6 +173,12 @@ jerror_t JEventProcessor_PiastraSipm::evnt(JEventLoop *loop, uint64_t eventnumbe
 	}
 	m_t->Fill();
 	japp->RootUnLock();
+
+	for (int ii=0;ii<hits.size();ii++){
+		const IntVetoDigiHit* hit=hits[ii];
+
+	}
+
 
 	return NOERROR;
 }
