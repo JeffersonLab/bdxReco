@@ -1409,7 +1409,13 @@ jerror_t JApplication::Init(void)
 
 	// Call init Processors (note: factories don't exist yet)
 	try{
-		for(unsigned int i=0;i<processors.size();i++)processors[i]->init();
+		jout<<"BEFORE LOOP"<<endl;
+		fflush(stdout);
+		for(unsigned int i=0;i<processors.size();i++){
+			jout<<i<<" : "<<processors[i]->className()<<std::endl;
+			fflush(stdout);
+			processors[i]->init();
+		}
 	}catch(exception &e){
 		jerr<<endl;
 		_DBG_<<e.what()<<endl;

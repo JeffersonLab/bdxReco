@@ -3,11 +3,11 @@ from utils import *
 Import('env mc_enable')
 
 # Loop over libraries, building each
-libs=['EventBuilder','IntVeto','ExtVeto','Calorimeter','Paddles','TT','EPICS','system','DAQ','MC']
+libs=['EventBuilder','Calorimeter','TT','EPICS','system','DAQ','MC']
 if (mc_enable):
-	libs=['EventBuilder','BDXmini','IntVeto','ExtVeto','Calorimeter','Paddles','TT','EPICS','system','DAQ','MC']
+	libs=['EventBuilder','BDXmini','Calorimeter','TT','EPICS','system','DAQ','MC']
 else:
-	libs=['EventBuilder','BDXmini','IntVeto','ExtVeto','Calorimeter','Paddles','TT','EPICS','system','DAQ']
+	libs=['EventBuilder','BDXmini','Calorimeter','TT','EPICS','system','DAQ']
 	
 src = []
 for lib in libs:

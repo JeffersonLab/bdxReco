@@ -1,5 +1,5 @@
 /*
- * faIntegratedHit.h
+ * faConvertedHit.h
  *
  *  Created on: Jan 21, 2016
  *      Author: celentan
@@ -26,3 +26,4 @@ public:
 
 
 #endif /* FAINTEGRATEDHIT_H_ */
+

@@ -27,6 +27,8 @@ TCanvas* fa250Mode1CalibPedSubHit::Draw(int id) const{
 	if (hWave!=0) delete hWave;
 	hWave=new TH1D(Form("hh%i_%i_%i",m_channel.rocid,m_channel.slot,m_channel.channel),Form("h%i_%i_%i",m_channel.rocid,m_channel.slot,m_channel.channel),this->samples.size(),-0.5*m_dT,(this->samples.size()-0.5)*m_dT);
 	this->toHisto(hWave);
+
+	hWave->GetYaxis()->SetRangeUser(-100.,16384.);
 	hWave->Draw();
 	return m_canvas;
 }

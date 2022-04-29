@@ -11,8 +11,7 @@
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 #include <TT/TranslationTable.h>
-#include <Calorimeter/CalorimeterSiPMHit.h>
-
+#include "CalorimeterRawDataHit.h"
 #include "TObject.h"
 
 class CalorimeterDigiHit:public jana::JObject{
@@ -31,13 +30,11 @@ public:
 		AddString(items, "Q", "%f", Q);
 		AddString(items, "T", "%f", T);
 		AddString(items, "A", "%f", A);
-		AddString(items, "type","%i",type);
 	}
 
 	double Q,T,A; //Charge (u.a.), time (ns), Amplitude (mV)
 	double pedMean,pedRMS;
 	bool RMSflag;
-	CalorimeterSiPMHit::hit_type type;
 	TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be 0
 
 

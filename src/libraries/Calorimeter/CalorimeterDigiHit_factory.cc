@@ -13,7 +13,7 @@ using namespace std;
 
 //objects we need from the framework
 #include <TT/TranslationTable.h>
-#include <Calorimeter/CalorimeterSiPMHit.h>
+#include "CalorimeterRawDataHit.h"
 //objects we put in the framework
 #include <Calorimeter/CalorimeterDigiHit.h>
 
@@ -51,9 +51,9 @@ jerror_t CalorimeterDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 
 	//1: Here, we get from the framework the objects we need to process
 	//1a: create vectors
-	vector <const CalorimeterSiPMHit*> m_CalorimeterSiPMHits;
-	vector <const CalorimeterSiPMHit*>::const_iterator it;
-	const CalorimeterSiPMHit*  m_CalorimeterSiPMHit;
+	vector <const CalorimeterRawDataHit*> m_CalorimeterSiPMHits;
+	vector <const CalorimeterRawDataHit*>::const_iterator it;
+	const CalorimeterRawDataHit*  m_CalorimeterSiPMHit;
 	//1b: retrieve CalorimeterSiPMHit objects
 	loop->Get(m_CalorimeterSiPMHits);
 
@@ -61,13 +61,12 @@ jerror_t CalorimeterDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 		 m_CalorimeterSiPMHit=(*it);
 		 m_CalorimeterDigiHit=new CalorimeterDigiHit();
 		 m_CalorimeterDigiHit->m_channel=*(m_CalorimeterSiPMHit->m_channel.calorimeter);
-		 m_CalorimeterDigiHit->Q=m_CalorimeterSiPMHit->Qphe;
+		 m_CalorimeterDigiHit->Q=m_CalorimeterSiPMHit->Q;
 		 m_CalorimeterDigiHit->T=m_CalorimeterSiPMHit->T;
 		 m_CalorimeterDigiHit->A=m_CalorimeterSiPMHit->A;
 		 m_CalorimeterDigiHit->pedMean=m_CalorimeterSiPMHit->pedMean;
 		 m_CalorimeterDigiHit->pedRMS=m_CalorimeterSiPMHit->pedRMS;
 		 m_CalorimeterDigiHit->RMSflag=m_CalorimeterSiPMHit->RMSflag;
-		 m_CalorimeterDigiHit->type=m_CalorimeterSiPMHit->type;
 		 m_CalorimeterDigiHit->AddAssociatedObject(m_CalorimeterSiPMHit);
 		 _data.push_back(m_CalorimeterDigiHit);
 	}

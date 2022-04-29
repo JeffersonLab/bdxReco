@@ -12,9 +12,8 @@
 #include <JANA/JFactory.h>
 #include <TT/TranslationTable.h>
 #include <system/BDXObject.h>
-#include <Calorimeter/CalorimeterSiPMHit.h>
-
 #include <TObject.h>
+#include "CalorimeterRawDataHit.h"
 
 class TH1D;
 class TCanvas;

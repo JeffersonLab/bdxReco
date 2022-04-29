@@ -19,7 +19,7 @@ class fa250Mode1CalibPedSubHit:public fa250Mode1Hit{
 		fa250Mode1CalibPedSubHit();
 		virtual ~fa250Mode1CalibPedSubHit();
 
-		
+
 
 		// This method is used primarily for pretty printing
 		// the second argument to AddString is printf style format
@@ -29,7 +29,7 @@ class fa250Mode1CalibPedSubHit:public fa250Mode1Hit{
 			 AddString(items, "channel", "%4d", m_channel.channel);
 			 AddString(items, "nsamples", "%4d", samples.size());
 		}
-		
+
 		double m_ped,m_RMS; //from DB
 
 

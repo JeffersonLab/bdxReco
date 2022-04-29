@@ -1,0 +1,99 @@
+################################
+# scons build system file
+################################
+#
+# Much of this file can be used as a boilerplate build file.
+#
+# The parts that are dependent on the details of the software
+# package being compiled are:
+#
+#   1) the name and version of this software package
+#   2) the needed header files and libraries
+#   3) what type of documentation needs to be installed
+#   4) the scons files to be run in the source directories
+#
+################################
+
+# Get various python modules
+import re, sys, os, string, subprocess, SCons.Node.FS
+from subprocess import Popen, PIPE
+
+import utils
+
+
+Import('env')
+env=env.Clone();
+
+# Created files & dirs will have this permission
+os.umask(002)
+
+# Software version
+versionMajor = '15'
+versionMinor = '1'
+
+# Determine the os and machine names
+uname    = os.uname();
+platform = uname[0]
+machine  = uname[4]
+
+# Debug/optimization flags
+debugSuffix = ''
+debug = ARGUMENTS.get('debug', 0)
+if debug:
+#    debugSuffix = '-dbg'
+    # Compile with -g and add debugSuffix to all executable names
+    env.AppendUnique(CCFLAGS = '-g')
+    env.AppendUnique(CXXFLAGS = '-g')
+    env.AppendUnique(FORTRANFLAGS = '-g')
+    env.AppendUnique(PROGSUFFIX = debugSuffix)
+  
+
+execLibs = ['']
+
+# Platform dependent quantities.
+# Default to standard Linux libs.
+execLibs = ['m', 'pthread', 'dl', 'rt']
+    
+
+if platform == 'Darwin':
+	execLibs = ['pthread', 'dl']
+	#env.Append(CPPDEFINES = ['Darwin'], SHLINKFLAGS = ['-multiply_defined'])
+ 	env.AppendUnique(CCFLAGS = ['-fmessage-length=0'])
+
+
+
+# Hidden sub directory into which variant builds go
+archDir = '.' + platform + "_" + machine+ debugSuffix
+
+
+
+
+print 'ET support being done'
+
+
+
+
+##################################################
+# Special Include Directory for java header files
+##################################################
+
+# Because we're using JNI, we need access to <jni.h> when compiling. 
+if not utils.configureJNI(env):
+    print "\nJava Native Interface header is required, set JAVA_HOME, exiting\n"
+    Exit(0)
+
+
+
+
+######################################################
+# Lower level scons files (software package dependent)
+######################################################
+
+# Make available to lower level scons files
+Export('env archDir execLibs debugSuffix')
+
+# Run lower level build files
+
+env.SConscript('src/libsrc/SConscript',   variant_dir='src/libsrc/'+archDir,   duplicate=0)
+env.SConscript('src/execsrc/SConscript',  variant_dir='src/execsrc/'+archDir,  duplicate=0)
+env.SConscript('src/examples/SConscript', variant_dir='src/examples/'+archDir, duplicate=0)

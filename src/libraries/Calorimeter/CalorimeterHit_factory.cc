@@ -23,13 +23,8 @@ CalorimeterHit_factory::CalorimeterHit_factory() :
 		m_ene(0), m_tt(0) {
 	VERBOSE = 0;
 	isMC = 0;
-	m_THR_singleReadout = 5;
-	m_THR_multipleReadout = 3;
-	m_N_multipleReadout = 2;
-
-	gPARMS->SetDefaultParameter("CALORIMETER:HIT_THR_SINGLE", m_THR_singleReadout, "Threshold in phe (charge) for a detector with single readout");
-	gPARMS->SetDefaultParameter("CALORIMETER:HIT_THR_MULTI", m_THR_multipleReadout, "Threshold in phe (charge) for a detector with multi readout");
-	gPARMS->SetDefaultParameter("CALORIMETER:HIT_N_MULTI", m_N_multipleReadout, "Multiplicity for a detector with multi readout");
+	m_THR=0;
+	gPARMS->SetDefaultParameter("CALORIMETER:HIT_THR", m_THR, "Threshold in charge");
 	gPARMS->GetParameter("CALORIMETER:VERBOSE", VERBOSE);
 
 }
@@ -94,11 +89,8 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	m_map.clear();
 	for (it = m_CalorimeterDigiHits.begin(); it != m_CalorimeterDigiHits.end(); it++) {
 		m_channel = ((*it)->m_channel);
-		/*a.c. fix for crs x=0 y=0 first catania Proto*/
-		if (m_channel.readout != 1) continue;
 		m_channel.readout = 0;
 		m_map[m_channel].push_back(*it);
-
 	}
 
 	/*Now the map is full of all the hits in different active elements of calorimeter, i.e. with different identifiers, BUT readout, that maps the sipm hits.
@@ -114,7 +106,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			m_CalorimeterDigiHit = m_CalorimeterDigiHit_tmp[0];
 			Q = m_CalorimeterDigiHit->Q;
 			T = m_CalorimeterDigiHit->T;
-			if (Q > m_THR_singleReadout) {
+			if (Q > m_THR) {
 				m_CalorimeterHit = new CalorimeterHit();
 				m_CalorimeterHit->m_channel = m_CalorimeterDigiHit->m_channel;
 				m_CalorimeterHit->m_channel.readout = 0;
@@ -134,56 +126,6 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 				_data.push_back(m_CalorimeterHit); //publish it
 			}
 		}
-		/*Multiple readout object:
-		 *
-		 *  This is the case of crs x=0 y=0 first catania Proto
-		 *  This is also the case of JLabFlux0 crs
-		 *  */
-		else if (m_CalorimeterDigiHit_tmp.size() >= 2) {
-			countOk = 0;
-			Qtot = 0;
-			Qmax = -9999;
-			for (int idigi = 0; idigi < m_CalorimeterDigiHit_tmp.size(); idigi++) {
-				m_CalorimeterDigiHit = m_CalorimeterDigiHit_tmp[idigi];
-				Q = m_CalorimeterDigiHit->Q;
-				T = m_CalorimeterDigiHit->T;
-
-				if (Q > m_THR_multipleReadout) {
-					countOk++;
-					Qtot += Q;
-				}
-				if (Q > Qmax) {
-					Qmax = Q;
-					Tmax = T;
-				}
-			}
-
-			/*At the end of this loop, countOK is the number of counters above thr*/
-			if (countOk >= m_N_multipleReadout) {
-				m_CalorimeterHit = new CalorimeterHit();
-				m_CalorimeterHit->m_channel = m_CalorimeterDigiHit->m_channel;
-				m_CalorimeterHit->m_channel.readout = 0;
-				m_CalorimeterHit->T = Tmax;
-
-				/*Loop again to associate*/
-				for (int idigi = 0; idigi < m_CalorimeterDigiHit_tmp.size(); idigi++) {
-					m_CalorimeterDigiHit = m_CalorimeterDigiHit_tmp[idigi];
-					m_CalorimeterHit->AddAssociatedObject(m_CalorimeterDigiHit);
-				}
-				/*Try to calibrate in energy and ped-sub*/
-				gain = m_ene->getCalib(m_CalorimeterHit->m_channel)[0];
-				ped = m_ene->getCalib(m_CalorimeterHit->m_channel)[1];
-				m_CalorimeterHit->E = (Qmax - ped);
-				m_CalorimeterHit->Eraw = Qmax;
-				m_CalorimeterHit->A = m_CalorimeterDigiHit->A;
-
-				if (gain != 0) {
-					m_CalorimeterHit->E /= gain;
-				}
-				_data.push_back(m_CalorimeterHit);
-			}
-		}
-
 	}
 
 	return NOERROR;

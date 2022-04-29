@@ -11,14 +11,16 @@
 #include <JANA/jerror.h>
 #include <JANA/JFactoryGenerator.h>
 
-#include "fa250Mode1Hit.h"
-#include "fa250Mode7Hit.h"
-#include "fa250Mode1CalibPedSubHit_factory.h"
-#include "fa250Mode1CalibPedSubHitFFT_factory.h"
+
 #include "eventData.h"
 #include "epicsRawData.h"
+
+#include "fa250Mode1Hit.h"
 #include "fa250WaveboardV1Hit.h"
-#include "fa250Mode1CalibPedSubCrossCorrelation_factory.h"
+
+#include "fa250Mode1CalibPedSubHit_factory.h"
+
+#include "fa250ConvertedHit.h"
 
 class JFactoryGenerator_DAQ: public jana::JFactoryGenerator {
 public:
@@ -34,14 +36,12 @@ public:
 	}
 
 	jerror_t GenerateFactories(jana::JEventLoop *loop) {
-		loop->AddFactory(new JFactory<fa250WaveboardV1Hit>());
+		loop->AddFactory(new JFactory<fa250ConvertedHit>());
 		loop->AddFactory(new JFactory<fa250Mode1Hit>());
-		loop->AddFactory(new JFactory<fa250Mode7Hit>());
+		loop->AddFactory(new JFactory<fa250WaveboardV1Hit>());
+		loop->AddFactory(new fa250Mode1CalibPedSubHit_factory());
 		loop->AddFactory(new JFactory<eventData>());
 		loop->AddFactory(new JFactory<epicsRawData>());
-		loop->AddFactory(new fa250Mode1CalibPedSubHit_factory());
-		loop->AddFactory(new fa250Mode1CalibPedSubHitFFT_factory());
-		loop->AddFactory(new fa250Mode1CalibPedSubCrossCorrelation_factory());
 		return NOERROR;
 	}
 

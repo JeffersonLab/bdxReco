@@ -1,0 +1,43 @@
+#Configuration file for BDX data reconstruction.
+
+#System parameters
+MC		0
+JANA_CALIB_CONTEXT "variation=NA64WB"
+THREAD_TIMEOUT 300
+THREAD_TIMEOUT_FIRST_EVENT 300
+
+
+DAQ:VERBOSE 2 
+
+#Calo wave integration parameters
+CALORIMETER:NPED	        50	#num of samples to include in pedestal at the beginning               (in samples)
+CALORIMETER:FIRST	        70	#first sample (included) to include in the integration window 	      (in samples)
+CALORIMETER:LAST	       150 	#last sample  (included)  to include in the integration window        (in samples) 
+
+
+
+#Calorimeter parameters
+CALORIMETER:HIT_THR  5  #Threshold in charge
+
+#Calorimeter clustering
+CALORIMETER:CLUSTER_HIT_THR	20 	#Hit threshold in MeV for clustering
+CALORIMETER:CLUSTER_SEED_THR 50	#Seed threshold in MeV for clustering
+
+
+
+
+#Parameters for the WBpeds plugin
+WBpeds:pedMeanMin  500 
+WBpeds:pedMeanMax 1000
+WBpeds:pedMeanN   1000
+
+WBpeds:pedRMSMin     0
+WBpeds:pedRMSMax    20
+WBpeds:pedRMSN     200
+
+WBpeds:nSamples		20
+
+#Parameters for the NA64EcalHits plugin
+NA64EcalHits:Emin 0
+NA64EcalHits:Emax 50000
+NA64EcalHits:NE   250

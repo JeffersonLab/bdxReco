@@ -23,7 +23,7 @@ class fa250WaveboardV1Hit:public fa250Hit{
 		fa250WaveboardV1Hit();
 		virtual ~fa250WaveboardV1Hit();
 
-		vector <double> samples;
+		vector <uint16_t> samples;
 		int chargeFirstDBnopedsub;
 		// This method is used primarily for pretty printing
 		// the second argument to AddString is printf style format

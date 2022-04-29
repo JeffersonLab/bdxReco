@@ -32,9 +32,7 @@ class CalorimeterHit_factory:public BDXFactory<CalorimeterHit>{
 		int isMC;
 		const TranslationTable *m_tt;
 
-		int m_THR_singleReadout;
-		int m_THR_multipleReadout;
-		int m_N_multipleReadout;
+		int m_THR;
 		int VERBOSE;
 
 		CalibrationHandler<TranslationTable::CALO_Index_t> *m_ene;

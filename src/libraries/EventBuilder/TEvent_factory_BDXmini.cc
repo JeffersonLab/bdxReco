@@ -8,11 +8,9 @@ using namespace std;
 #include <Calorimeter/CalorimeterCluster.h>
 #include <Calorimeter/CalorimeterHit.h>
 #include <Calorimeter/CalorimeterDigiHit.h>
-#include <IntVeto/IntVetoHit.h>
+
 
 #include <DAQ/eventData.h>
-#include <DAQ/fa250Mode1CalibPedSubHit.h>
-#include <DAQ/fa250Mode1CalibPedSubCrossCorrelation.h> //M.S.
 
 #include <MC/MCType.h>
 #ifdef MC_SUPPORT_ENABLE
@@ -157,7 +155,6 @@ jerror_t TEvent_factory_BDXmini::init(void) {
 	japp->RootWriteLock();
 
 	m_CaloHits = new TClonesArray("CalorimeterHit");
-	m_IntVetoHits = new TClonesArray("IntVetoHit");
 	m_fa250Mode1CalibPedSubHits = new TClonesArray("fa250Mode1CalibPedSubHit");
 
 #ifdef MC_SUPPORT_ENABLE
@@ -188,19 +185,15 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 
 	const eventData *tData;
 	const triggerDataBDXmini *bdxtData;
-	const fa250Mode1CalibPedSubCrossCorrelation *crosscorrelations; //M.S.
+
 
 	triggerDataBDXmini *bdxtData_write = new triggerDataBDXmini();
-	fa250Mode1CalibPedSubCrossCorrelation *crosscorrelations_write =
-			new fa250Mode1CalibPedSubCrossCorrelation; //M.S.
+
 
 	vector<const CalorimeterCluster*> cclusters;
 	vector<const CalorimeterHit*> chits;
 	vector<const CalorimeterDigiHit*> cdhits;
 
-	vector<const IntVetoHit*> ivhits;
-
-	vector<const fa250Mode1CalibPedSubHit*> fa250Hits;
 
 	bool saveWaveforms_flagCalo = false;
 	bool saveWaveforms_flagVeto = true;
@@ -234,14 +227,7 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			return OBJECT_NOT_AVAILABLE;
 		}
 
-		try {
-			loop->GetSingle(crosscorrelations);
-		} catch (unsigned long e) {
-			jout
-					<< "TEvent_factory_BDXmini::evnt no Crosscorrelations this event"
-					<< endl;
-			return OBJECT_NOT_AVAILABLE;
-		}
+
 
 		m_eventHeader->setEventType(BDXminiEvent);
 		m_eventHeader->setRunNumber(tData->runN);
@@ -255,8 +241,7 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		m_eventHeader->setWeight(1);
 		*bdxtData_write = *bdxtData;
 		m_event->addObject(bdxtData_write);
-		*crosscorrelations_write = *crosscorrelations;
-		m_event->addObject(crosscorrelations_write); //M.S.
+
 
 	} else {
 		m_eventHeader->setEventType(BDXminiEvent);
@@ -280,40 +265,13 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	if (saveWaveforms_Etot > m_thrEneTot)
 		saveWaveforms_flagCalo = true; //flag if Etot > threshold
 
-	loop->Get(ivhits);
-	m_IntVetoHits->Clear("C");
-	for (int ii = 0; ii < ivhits.size(); ii++) {
-		((IntVetoHit*) m_IntVetoHits->ConstructedAt(ii))->operator=(
-				*(ivhits[ii]));
-		m_event->AddAssociatedObject(ivhits[ii]);
-		//Check for the presence of activity in the veto
-		if (ivhits[ii]->m_channel.sector == 0
-				&& ivhits[ii]->m_channel.component == 3)
-			continue; //ignore OV3, broken
-		if ((ivhits[ii])->Q > m_thrNpheVeto)
-			saveWaveforms_flagVeto = false; //flag if all counters are below threshold. If there is even one with Q > threshold, dont'save
-	}
-	m_event->addCollection(m_IntVetoHits);
 
 
 
 
 	/*fa250Hits -only non MC*/
+	/*
 	if (!m_isMC) {
-
-		//M.S
-		double c_sin = crosscorrelations->crossCorrSine_calo;
-		double c_sign = crosscorrelations->crossCorrSignal_calo;
-		if (c_sin > m_thrCrosscorrSinCaloMin && c_sin < m_thrCrosscorrSinCaloMax
-				&& c_sign < m_thrCrosscorrSignCaloMax)
-			saveWaveforms_Crosscorr = true;
-
-		if (c_sign > m_thrCrosscorrSignCaloMin && c_sign < m_thrCrosscorrSignCaloMax
-				&& c_sin < m_thrCrosscorrSinCaloMax)
-			saveWaveforms_Crosscorr = true;
-
-
-
 		m_fa250Mode1CalibPedSubHits->Clear("C");
 		if ((saveWaveforms_flagVeto && saveWaveforms_flagCalo)
 				|| saveWaveforms_Crosscorr) {
@@ -325,7 +283,7 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			}
 			m_event->addCollection(m_fa250Mode1CalibPedSubHits); //So that the collection is here only if it is not empty
 		}
-	}
+	}*/
 
 #ifdef MC_SUPPORT_ENABLE
 	if (m_isMC) {

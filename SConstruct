@@ -58,6 +58,9 @@ env.Append(CPPPATH=Dir('#/src/external').srcnode().abspath)
 env.Append(CPPPATH=Dir('#/src/libraries').srcnode().abspath)
 env.Append(CPPPATH=Dir('#/src/plugins').srcnode().abspath)
 env.Append(CPPPATH=Dir('#/.').srcnode().abspath)
+#A.C.
+env.Append(CPPPATH="/work/jdaq6/apps/boost/1.73.0/include/")
+#A.C. end
 env.Append(LIBPATH = ['#/lib'])
 
 env.Replace(RPATH=Dir('#/lib').srcnode().abspath)

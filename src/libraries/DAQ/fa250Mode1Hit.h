@@ -49,4 +49,3 @@ ClassDef(fa250Mode1Hit,1);
 };
 
 #endif // _fa250Mode1Hit_
-
